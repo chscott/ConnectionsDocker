@@ -28,7 +28,7 @@ function checkUserGroupStatus() {
 # $2: file name
 function downloadFile() {
 
-	 local server="${1}"
+    local server="${1}"
     local dir="${2}"
     local file="${3}"
     printf "I Downloading ${file} from ${server}...\n"
