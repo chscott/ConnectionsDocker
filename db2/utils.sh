@@ -31,7 +31,6 @@ function downloadFile() {
     local server="${1}"
     local dir="${2}"
     local file="${3}"
-    printf "I Downloading ${file} from ${server}...\n"
     ${curl} "ftp://${server}/${dir}/${file}" || printf "E Download failed. Exiting\n"
 	 
 }
