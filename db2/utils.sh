@@ -22,3 +22,16 @@ function checkUserGroupStatus() {
     fi
 
 }
+
+# Download a file from FTP
+# $1: FTP directory
+# $2: file name
+function downloadFile() {
+
+    local dir=${1}
+    local file=${2}
+    log "I Downloading ${file} from ${ftpServer}..."
+    ${curl} ftp://${ftpServer}/${dir}/${file}
+    checkStatus ${?} "E Download failed. Exiting."
+	 
+}
