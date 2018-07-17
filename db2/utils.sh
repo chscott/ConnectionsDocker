@@ -3,12 +3,10 @@
 # $2: Log message
 # $3: User or group name
 function checkUserGroupStatus() {
-
     local code="${1}"
     local message="${2}"
     local entity="${3}"
     local operation="${4}"
-
     if [[ "${code}" != 0 ]]; then
         # Non-fatal error
         if [[ "${code}" == 9 ]]; then
@@ -20,7 +18,6 @@ function checkUserGroupStatus() {
             exit 1
         fi
     fi
-
 }
 
 # Check exit code of database operation. Per the DB2 doc, the -s option
@@ -31,23 +28,34 @@ function checkUserGroupStatus() {
 function checkStatusDb() {
     local code="${1}"
     local message="${2}"
-
     if [[ "${code}" != 0 && "${code}" != 1 && "${code}" != 2 && "${code}" != 3 ]]; then
         printf "E ${message}\n"
         printf "E Exit status: ${code}\n"
         exit 1
     fi
-
 }
 
-# Download a file from FTP
-# $1: FTP directory
-# $2: file name
-function downloadFile() {
+# Print a log message with severity
+function log() {
+	local severity="${1}"
+	local message="${2}"
+	printf "%s: %s\n" "${severity}" "${message}"
+}
 
-    local server="${1}"
-    local dir="${2}"
-    local file="${3}"
-    curl -O -J "ftp://${server}/${dir}/${file}" || printf "E Download failed. Exiting\n"
-    
+# Print an information message
+function inform() {
+	local message="${1}"
+	log "INFO" "${message}"
+}
+
+# Print a warning message
+function warn() {
+	local message="${1}"	
+	log "WARN" "${message}"
+}
+
+# Print a failure message
+function fail() {
+	local message="${1}"	
+	log "FAIL" "${message}"
 }
