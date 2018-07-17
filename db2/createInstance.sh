@@ -32,9 +32,13 @@ inform "Setting open file limits for ${db2InstanceGroup} in /etc/security/limits
 printf "@${db2InstanceGroup}\tsoft\tnofile\t16384" >> "/etc/security/limits.conf"
 printf "@${db2InstanceGroup}\thard\tnofile\t65536" >> "/etc/security/limits.conf"
 
-# Create the instance
-inform "Beginning creation of DB2 instance..."
-"${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" || { fail "DB2 instance creation failed"; exit 1; }
+# Create the instance if it doesn't already exist
+if [[ ! -d "${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}" ]]; then
+	inform "Beginning creation of DB2 instance..."
+	"${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" || { fail "DB2 instance creation failed"; exit 1; }
+else
+	warn "DB2 instance already exists at ${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}. Skipping"
+fi
 
 # Enable Unicode
 inform "Enabling Unicode codepage..."
