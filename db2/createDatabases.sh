@@ -9,8 +9,8 @@ icDbScriptDir="${scriptDir}/db2/Wizards/connections.sql"
 
 # Unpack the database creation scripts
 printf "I Unpacking database creation scripts...\n"
-tar -xzf "${FTP_FILE}"
-chown -R "${db2InstanceUser}.${db2InstanceGroup}" "Wizards"
+tar -xf "${FTP_FILE}"
+chown -R "${db2InstanceUser}.${db2InstanceGroup}" "${FTP_FILE}"
 
 # Create the Core databases (these are mandatory since Core is mandatory)
 printf "I Creating databases for Core...\n"
