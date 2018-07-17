@@ -1,7 +1,7 @@
 #!/bin/bash
 
 scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-icDbScriptDir="${scriptDir}/db2/Wizards/connections.sql"
+icDbScriptDir="${scriptDir}/Wizards/connections.sql"
 
 # Source prereq scripts
 . "${scriptDir}/setup.conf"
