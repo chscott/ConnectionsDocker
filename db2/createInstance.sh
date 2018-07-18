@@ -22,11 +22,14 @@ printf "%s\t%s\t\t%s\n" "DB2_${db2InstanceUser}" "50000/tcp" "# DB2 instance" >>
 
 # Start the DB2 instance
 inform "Starting DB2 instance..."
-su - "${db2InstanceUser}" -c "db2start"
+su - "${db2InstanceUser}" -c "db2start >/dev/null"
+if [[ "${?}" > 0 ]]; then
+	fail "Unable to start DB2 instance. Exiting"
+fi
 
 # Enable Unicode
 inform "Enabling Unicode codepage..."
-su - "${db2InstanceUser}" -c "\"${db2DataDir}/${db2InstanceUser}/sqllib/adm/db2set\" DB2CODEPAGE=1208 >/dev/null 2>&1" || \
+su - "${db2InstanceUser}" -c "\"${db2DataDir}/${db2InstanceUser}/sqllib/adm/db2set\" DB2CODEPAGE=1208 >/dev/null" ||
     warn "Unable to set DB2 codepage"
 
 inform "Completed creation of DB2 instance"

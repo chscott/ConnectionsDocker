@@ -19,16 +19,16 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
     warn "HOMEPAGE database is already created. Skipping"
 else
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/createDb.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to create database: Homepage"
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-    checkStatusDb "${result}" "Unable to grant rights on database: Homepage" 
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/initData.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to initialize data for database: Homepage"
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/reorg.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to run reorg on database: Homepage"
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/updateStats.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to update stats for database: Homepage"
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/createDb.sql\" >/dev/null" ||
+		checkStatusDb "${result}" "Unable to create database: Homepage"
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/appGrants.sql\" >/dev/null" ||
+		checkStatusDb "${result}" "Unable to grant rights on database: Homepage" 
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/initData.sql\" >/dev/null" ||
+    	checkStatusDb "${result}" "Unable to initialize data for database: Homepage"
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/reorg.sql\" >/dev/null" ||
+    	checkStatusDb "${result}" "Unable to run reorg on database: Homepage"
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/updateStats.sql\" >/dev/null" ||
+    	checkStatusDb "${result}" "Unable to update stats for database: Homepage"
 fi
 
 # Files
@@ -37,10 +37,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
     warn "FILES database is already created. Skipping"
 else
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/files/db2/createDb.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to create database: Files" 
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/files/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-    checkStatusDb "${result}" "Unable to grant rights on database: Files" 
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/files/db2/createDb.sql\" >/dev/null" ||
+    	checkStatusDb "${result}" "Unable to create database: Files" 
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/files/db2/appGrants.sql\" >/dev/null" || 
+    	checkStatusDb "${result}" "Unable to grant rights on database: Files" 
 fi
 
 # Push Notification
@@ -49,10 +49,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
     warn "PNS database is already created. Skipping"
 else
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/pushnotification/db2/createDb.sql\" >/dev/null"; result="${?}"
-    checkStatusDb "${result}" "Unable to create database: Push Notification" 
-    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/pushnotification/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-    checkStatusDb "${result}" "Unable to grant rights on database: Push Notification" 
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/pushnotification/db2/createDb.sql\" >/dev/null" ||
+    	checkStatusDb "${result}" "Unable to create database: Push Notification" 
+    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/pushnotification/db2/appGrants.sql\" >/dev/null" || 
+    	checkStatusDb "${result}" "Unable to grant rights on database: Push Notification" 
 fi
 
 # Activities
@@ -61,10 +61,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "OPNACT database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/activities/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Activities" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/activities/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Activities" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/activities/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Activities" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/activities/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Activities" 
 fi
 
 # Blogs
@@ -73,10 +73,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "BLOGS database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/blogs/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Blogs" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/blogs/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Blogs" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/blogs/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Blogs" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/blogs/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Blogs" 
 fi
 
 # Bookmarks
@@ -85,10 +85,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "DOGEAR database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/dogear/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Bookmarks" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/dogear/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Bookmarks" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/dogear/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Bookmarks" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/dogear/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Bookmarks" 
 fi
 
 # Communities
@@ -97,14 +97,14 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "SNCOMM database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Communities" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Communities" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/calendar-createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create table: Calendar"
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/calendar-appGrants.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to grant rights on table: Calendar"
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Communities" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Communities" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/calendar-createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create table: Calendar"
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/calendar-appGrants.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to grant rights on table: Calendar"
 fi
 
 # Forums
@@ -113,10 +113,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "FORUM database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/forum/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Forum" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/forum/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Forum" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/forum/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Forum" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/forum/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Forum" 
 fi
 
 # Metrics
@@ -125,10 +125,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "METRICS database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/metrics/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Metrics" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/metrics/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Metrics" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/metrics/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Metrics" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/metrics/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Metrics" 
 fi
 
 # Mobile
@@ -137,10 +137,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "MOBILE database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/mobile/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Mobile" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/mobile/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Mobile" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/mobile/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Mobile" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/mobile/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Mobile" 
 fi
 
 # Profiles
@@ -149,10 +149,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "PEOPLEDB database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/profiles/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Profiles" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/profiles/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Profiles" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/profiles/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Profiles" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/profiles/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Profiles" 
 fi
 
 # Wikis
@@ -161,10 +161,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "WIKIS database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/wikis/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: Wikis" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/wikis/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: Wikis" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/wikis/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: Wikis" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/wikis/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: Wikis" 
 fi
 
 # CCM - GCD
@@ -173,10 +173,10 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "FNGCD database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.gcd/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: GCD" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.gcd/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: GCD" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.gcd/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: GCD" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.gcd/db2/appGrants.sql\" >/dev/null" || 
+   	checkStatusDb "${result}" "Unable to grant rights on database: GCD" 
 fi
 
 # CCM - OS
@@ -185,8 +185,8 @@ count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Databa
 if [[ "${count}" > 0 ]]; then
    warn "FNOS database is already created. Skipping"
 else
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.os/db2/createDb.sql\" >/dev/null"; result="${?}"
-   checkStatusDb "${result}" "Unable to create database: OS" 
-   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.os/db2/appGrants.sql\" >/dev/null"; result="${?}" 
-   checkStatusDb "${result}" "Unable to grant rights on database: OS" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.os/db2/createDb.sql\" >/dev/null" ||
+   	checkStatusDb "${result}" "Unable to create database: OS" 
+   su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.os/db2/appGrants.sql\" >/dev/null" || 
+   		checkStatusDb "${result}" "Unable to grant rights on database: OS" 
 fi
