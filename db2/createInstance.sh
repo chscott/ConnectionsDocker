@@ -9,7 +9,7 @@ WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Create the instance if it doesn't already exist
 if [[ ! -d "${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}" ]]; then
     inform "Beginning creation of DB2 instance..."
-    "${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" || { fail "DB2 instance creation failed"; exit 1; }
+    "${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" >/dev/null || { fail "DB2 instance creation failed"; exit 1; }
 else
     warn "DB2 instance already exists at ${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}. Skipping"
 fi
