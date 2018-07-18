@@ -29,5 +29,5 @@ printf "lcuser:${defaultPwd}" | chpasswd
 
 # Increase open file limit for instance owner group
 inform "Setting open file limits for ${db2InstanceGroup} in /etc/security/limits.conf..."
-printf "@${db2InstanceGroup}\tsoft\tnofile\t16384" >> "/etc/security/limits.conf"
-printf "@${db2InstanceGroup}\thard\tnofile\t65536" >> "/etc/security/limits.conf"
+printf "@${db2InstanceGroup}\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf"
+printf "@${db2InstanceGroup}\thard\tnofile\t65536\n" >> "/etc/security/limits.conf"
