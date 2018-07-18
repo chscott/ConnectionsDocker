@@ -15,8 +15,8 @@ chown -R "${db2InstanceUser}.${db2InstanceGroup}" "${IC_DBS_PACKAGE}"
 
 # Homepage
 inform "Creating HOMEPAGE database..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'HOMEPAGE'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'HOMEPAGE'")
+if [[ "${count}" > 0 ]]; then
     warn "HOMEPAGE database is already created. Skipping"
 else
     su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/homepage/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -33,8 +33,8 @@ fi
 
 # Files
 inform "Creating FILES database..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'FILES'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FILES'")
+if [[ "${count}" > 0 ]]; then
     warn "FILES database is already created. Skipping"
 else
     su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/files/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -45,8 +45,8 @@ fi
 
 # Push Notification
 inform "Creating PNS database..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'PNS'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'PNS'")
+if [[ "${count}" > 0 ]]; then
     warn "PNS database is already created. Skipping"
 else
     su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/pushnotification/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -57,8 +57,8 @@ fi
 
 # Activities
 inform "Creating database for Activities..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'OPNACT'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'OPNACT'")
+if [[ "${count}" > 0 ]]; then
    warn "OPNACT database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/activities/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -69,8 +69,8 @@ fi
 
 # Blogs
 inform "Creating database for Blogs..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'BLOGS'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'BLOGS'")
+if [[ "${count}" > 0 ]]; then
    warn "BLOGS database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/blogs/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -81,8 +81,8 @@ fi
 
 # Bookmarks
 inform "Creating database for Bookmarks..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'DOGEAR'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'DOGEAR'")
+if [[ "${count}" > 0 ]]; then
    warn "DOGEAR database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/dogear/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -93,8 +93,8 @@ fi
 
 # Communities
 inform "Creating database for Communities..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'SNCOMM'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'SNCOMM'")
+if [[ "${count}" > 0 ]]; then
    warn "SNCOMM database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/communities/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -109,8 +109,8 @@ fi
 
 # Forums
 inform "Creating database for Forum..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'FORUM'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FORUM'")
+if [[ "${count}" > 0 ]]; then
    warn "FORUM database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/forum/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -121,8 +121,8 @@ fi
 
 # Metrics
 inform "Creating database for Metrics..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'METRICS'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'METRICS'")
+if [[ "${count}" > 0 ]]; then
    warn "METRICS database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/metrics/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -133,8 +133,8 @@ fi
 
 # Mobile
 inform "Creating database for Mobile..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'MOBILE'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'MOBILE'")
+if [[ "${count}" > 0 ]]; then
    warn "MOBILE database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/mobile/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -145,8 +145,8 @@ fi
 
 # Profiles
 inform "Creating database for Profiles..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'PEOPLEDB'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'PEOPLEDB'")
+if [[ "${count}" > 0 ]]; then
    warn "PEOPLEDB database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/profiles/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -157,8 +157,8 @@ fi
 
 # Wikis
 inform "Creating database for Wikis..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'WIKIS'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'WIKIS'")
+if [[ "${count}" > 0 ]]; then
    warn "WIKIS database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/wikis/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -169,8 +169,8 @@ fi
 
 # CCM - GCD
 inform "Creating database for CCM GCD..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'FNGCD'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FNGCD'")
+if [[ "${count}" > 0 ]]; then
    warn "FNGCD database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.gcd/db2/createDb.sql\" >/dev/null"; result="${?}"
@@ -181,8 +181,8 @@ fi
 
 # CCM - OS
 inform "Creating database for CCM OS..."
-su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep 'FNOS'"; result="${?}"
-if [[ "${result}" == 0 ]]; then
+count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FNOS'")
+if [[ "${count}" > 0 ]]; then
    warn "FNOS database is already created. Skipping"
 else
    su - "${db2InstanceUser}" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/library.os/db2/createDb.sql\" >/dev/null"; result="${?}"
