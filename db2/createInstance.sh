@@ -8,10 +8,10 @@ WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Create the instance if it doesn't already exist
 if [[ ! -d "${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}" ]]; then
-	inform "Beginning creation of DB2 instance..."
-	"${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" || { fail "DB2 instance creation failed"; exit 1; }
+    inform "Beginning creation of DB2 instance..."
+    "${db2InstallDir}/instance/db2icrt" -u "${db2FencedUser}" "${db2InstanceUser}" || { fail "DB2 instance creation failed"; exit 1; }
 else
-	warn "DB2 instance already exists at ${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}. Skipping"
+    warn "DB2 instance already exists at ${db2DataDir}/${db2InstanceUser}/${db2InstanceUser}. Skipping"
 fi
 
 # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
@@ -24,7 +24,7 @@ printf "%s\t%s\t\t%s\n" "DB2_${db2InstanceUser}" "50000/tcp" "# DB2 instance" >>
 inform "Starting DB2 instance..."
 su - "${db2InstanceUser}" -c "db2start >/dev/null"
 if [[ "${?}" > 0 ]]; then
-	fail "Unable to start DB2 instance. Exiting"
+    fail "Unable to start DB2 instance. Exiting"
 fi
 
 # Enable Unicode
