@@ -22,10 +22,7 @@ printf "%s\t%s\t\t%s\n" "DB2_${db2InstanceUser}" "50000/tcp" "# DB2 instance" >>
 
 # Start the DB2 instance
 inform "Starting DB2 instance..."
-su - "${db2InstanceUser}" -c "db2start >/dev/null"
-if [[ "${?}" > 0 ]]; then
-    fail "Unable to start DB2 instance. Exiting"
-fi
+su - "${db2InstanceUser}" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; exit 1; }
 
 # Enable Unicode
 inform "Enabling Unicode codepage..."
