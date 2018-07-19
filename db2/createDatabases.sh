@@ -2,7 +2,7 @@
 
 WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
-IC_DBS_PACKAGE="$(echo "${IC_DBS_URL}" | awk -F "/" '{print $NF}')"
+IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
 
 # Source prereq scripts
 . "${WORK_DIR}/setup.conf"
@@ -10,8 +10,8 @@ IC_DBS_PACKAGE="$(echo "${IC_DBS_URL}" | awk -F "/" '{print $NF}')"
 
 # Unpack the database creation scripts
 inform "Unpacking database creation scripts..."
-tar -xf "${IC_DBS_PACKAGE}"
-chown -R "${db2InstanceUser}.${db2InstanceGroup}" "${IC_DBS_PACKAGE}"
+tar -xf "${IC_DBWIZARD_PACKAGE}"
+chown -R "${db2InstanceUser}.${db2InstanceGroup}" "${IC_DBWIZARD_PACKAGE}"
 
 # Homepage
 inform "Creating HOMEPAGE database..."
