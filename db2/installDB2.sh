@@ -30,10 +30,7 @@ printf "FILE = ${db2InstallDir}\n" >> "db2_install.rsp"
 
 # Install DB2
 inform "Performing DB2 install..."
-"server_t/db2setup" \
-    -l "db2_install.log" \
-    -t "db2_install.trace" \
-    -r "db2_install.rsp" || \
+"server_t/db2setup" -l "db2_install.log" -t "db2_install.trace" -r "db2_install.rsp" >/dev/null ||
     { fail "DB2 installation failed"; cat "db2_install.log"; exit 1; }
 
 # Update the pam.d files
@@ -44,11 +41,11 @@ grep "pam_limits.so" "/etc/pam.d/sudo" >/dev/null 2>&1 || printf "session\trequi
 
 # Validate the install
 inform "Validating DB2 install..."
-"${db2InstallDir}/bin/db2val" -a -l "db2val.log"
+"${db2InstallDir}/bin/db2val" -a -l "db2val.log" >/dev/null
 grep "DBI1335I" "db2val.log" || { fail "DB2 validation failed"; exit 1; }
 
 # Apply the DB2 license
 inform "Applying DB2 license..."
-"${db2InstallDir}/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" || { fail "DB2 license installation failed"; exit 1; }
+"${db2InstallDir}/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; exit 1; }
 
 inform "Completed installation of DB2 server..."
