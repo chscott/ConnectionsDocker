@@ -42,7 +42,7 @@ grep "pam_limits.so" "/etc/pam.d/sudo" >/dev/null 2>&1 || printf "session\trequi
 # Validate the install
 inform "Validating DB2 install..."
 "${db2InstallDir}/bin/db2val" -a -l "db2val.log" >/dev/null
-grep "DBI1335I" "db2val.log" || { fail "DB2 validation failed"; exit 1; }
+grep "DBI1335I" "db2val.log" >/dev/null || { fail "DB2 validation failed"; exit 1; }
 
 # Apply the DB2 license
 inform "Applying DB2 license..."
