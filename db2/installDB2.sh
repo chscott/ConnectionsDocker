@@ -5,11 +5,10 @@ DB2_INSTALL_PACKAGE="$(echo "${DB2_INSTALL_URL}" | awk -F "/" '{print $NF}')"
 DB2_LICENSE_PACKAGE="$(echo "${DB2_LICENSE_URL}" | awk -F "/" '{print $NF}')"
 
 # Source prereq scripts
-. "${WORK_DIR}/setup.conf"
 . "${WORK_DIR}/utils.sh"
 
 # Exit if DB2 has already been installed
-if [[ -f "${db2InstallDir}/logs/db2install.history" ]]; then
+if [[ -f "/app/logs/db2install.history" ]]; then
     inform "DB2 has already been installed. Exiting"
     exit 0
 fi
@@ -41,11 +40,11 @@ grep "pam_limits.so" "/etc/pam.d/sudo" >/dev/null 2>&1 || printf "session\trequi
 
 # Validate the install
 inform "Validating DB2 install..."
-"${db2InstallDir}/bin/db2val" -a -l "db2val.log" >/dev/null
+"/app/bin/db2val" -a -l "db2val.log" >/dev/null
 grep "DBI1335I" "db2val.log" >/dev/null || { fail "DB2 validation failed"; exit 1; }
 
 # Apply the DB2 license
 inform "Applying DB2 license..."
-"${db2InstallDir}/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; exit 1; }
+"/app/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; exit 1; }
 
 inform "Completed installation of DB2 server..."
