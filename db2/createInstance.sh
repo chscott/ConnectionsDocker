@@ -25,7 +25,7 @@ su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance
 
 # Enable Unicode
 inform "Enabling Unicode codepage..."
-su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set\" DB2CODEPAGE=1208 >/dev/null" ||
+su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set" DB2CODEPAGE=1208 >/dev/null" ||
     warn "Unable to set DB2 codepage"
 
 inform "Completed creation of DB2 instance"
