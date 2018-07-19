@@ -1,6 +1,8 @@
 #!/bin/bash
 
 WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DB2_INSTALL_PACKAGE="$(echo "${DB2_INSTALL_URL}" | awk -F "/" '{print $NF}')"
+DB2_LICENSE_PACKAGE="$(echo "${DB2_LICENSE_URL}" | awk -F "/" '{print $NF}')"
 
 # Source prereq scripts
 . "${WORK_DIR}/setup.conf"
@@ -16,8 +18,8 @@ inform "Beginning installation of DB2 server..."
 
 # Extract the product install files
 inform "Extracting product install files..."
-tar -xzf "${db2InstallPackage}"
-unzip -qq "${db2LicensePackage}"
+tar -xzf "${DB2_INSTALL_PACKAGE}"
+unzip -qq "${DB2_LICENSE_PACKAGE}"
 
 # Build the response file
 inform "Building the DB2 silent install file..."
