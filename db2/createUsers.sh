@@ -19,7 +19,7 @@ useradd -r -m -d "/data/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkU
 printf "db2fenc1:password" | chpasswd
 useradd -r -m -d "/data/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1"
 printf "dasusr1:password" | chpasswd
-useradd -r -m -d "/data/lcuser" -g "db2inst1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" 
+useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" 
 printf "lcuser:password" | chpasswd
 
 # Increase open file limit for instance owner group
