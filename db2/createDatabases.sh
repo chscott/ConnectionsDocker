@@ -56,7 +56,7 @@ else
 fi
 
 # Activities
-inform "Creating database for Activities..."
+inform "Creating OPNACT database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'OPNACT'")
 if [[ "${count}" > 0 ]]; then
     warn "OPNACT database is already created. Skipping"
@@ -68,7 +68,7 @@ else
 fi
 
 # Blogs
-inform "Creating database for Blogs..."
+inform "Creating BLOGS database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'BLOGS'")
 if [[ "${count}" > 0 ]]; then
     warn "BLOGS database is already created. Skipping"
@@ -80,7 +80,7 @@ else
 fi
 
 # Bookmarks
-inform "Creating database for Bookmarks..."
+inform "Creating DOGEAR database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'DOGEAR'")
 if [[ "${count}" > 0 ]]; then
     warn "DOGEAR database is already created. Skipping"
@@ -92,7 +92,7 @@ else
 fi
 
 # Communities
-inform "Creating database for Communities..."
+inform "Creating SNCOMM database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'SNCOMM'")
 if [[ "${count}" > 0 ]]; then
     warn "SNCOMM database is already created. Skipping"
@@ -108,7 +108,7 @@ else
 fi
 
 # Forums
-inform "Creating database for Forum..."
+inform "Creating FORUM database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FORUM'")
 if [[ "${count}" > 0 ]]; then
     warn "FORUM database is already created. Skipping"
@@ -120,7 +120,7 @@ else
 fi
 
 # Metrics
-inform "Creating database for Metrics..."
+inform "Creating METRICS database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'METRICS'")
 if [[ "${count}" > 0 ]]; then
     warn "METRICS database is already created. Skipping"
@@ -132,7 +132,7 @@ else
 fi
 
 # Mobile
-inform "Creating database for Mobile..."
+inform "Creating MOBILE database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'MOBILE'")
 if [[ "${count}" > 0 ]]; then
     warn "MOBILE database is already created. Skipping"
@@ -144,7 +144,7 @@ else
 fi
 
 # Profiles
-inform "Creating database for Profiles..."
+inform "Creating PEOPLEDB database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'PEOPLEDB'")
 if [[ "${count}" > 0 ]]; then
     warn "PEOPLEDB database is already created. Skipping"
@@ -156,7 +156,7 @@ else
 fi
 
 # Wikis
-inform "Creating database for Wikis..."
+inform "Creating WIKIS database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'WIKIS'")
 if [[ "${count}" > 0 ]]; then
     warn "WIKIS database is already created. Skipping"
@@ -168,7 +168,7 @@ else
 fi
 
 # CCM - GCD
-inform "Creating database for CCM GCD..."
+inform "Creating FNGCD database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FNGCD'")
 if [[ "${count}" > 0 ]]; then
     warn "FNGCD database is already created. Skipping"
@@ -180,7 +180,7 @@ else
 fi
 
 # CCM - OS
-inform "Creating database for CCM OS..."
+inform "Creating FNOS database..."
 count=$(su - "${db2InstanceUser}" -c "db2 list database directory | grep 'Database name' | grep -c 'FNOS'")
 if [[ "${count}" > 0 ]]; then
     warn "FNOS database is already created. Skipping"
