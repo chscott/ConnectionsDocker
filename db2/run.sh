@@ -32,24 +32,24 @@ curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh"
 inform "Starting DB2 run script..."
 
 if [[ ! -z "${CR2_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
-    applyCR2Updates
-    startDB2
+    applyCR2Updates || warn "CR2 database updates failed"
+    startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 elif [[ ! -z "${CR1_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
-    applyCR1Updates
-    startDB2
+    applyCR1Updates || warn "CR1 database updates failed"
+    startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 elif [[ ! -z "${CR2_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
-    init
-    applyCR2Updates
-    startDB2
+    init || { fail "DB2 init failed. Exiting"; exit 1; }
+    applyCR2Updates "CR2 database updates failed"
+    # No need to start DB2 since it was started during init
 elif [[ ! -z "${CR1_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
-    init
-    applyCR1Updates
-    startDB2
+    init || { fail "DB2 init failed. Exiting"; exit 1; }
+    applyCR1Updates warn "CR1 database updates failed"
+    # No need to start DB2 since it was started during init
 elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
-    init
-    startDB2
+    init || { fail "DB2 init failed. Exiting"; exit 1; }
+    # No need to start DB2 since it was started during init
 elif [[ -f "${WORK_DIR}/init_complete" ]]; then
-    startDB2
+    startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
 
 inform "Completed DB2 run script"

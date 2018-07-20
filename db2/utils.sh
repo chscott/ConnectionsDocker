@@ -47,7 +47,7 @@ function checkUserGroupStatus() {
         # Fatal
         else
             fail "Unable to create ${entity}. Exit code: ${code}"
-            exit 1
+            return 1
         fi
     fi
 
@@ -86,20 +86,22 @@ function createInstance() {
     # Create the instance if it doesn't already exist
     if [[ ! -d "/data/db2inst1/db2inst1" ]]; then
         inform "Beginning creation of DB2 instance..."
-        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; exit 1; }
+        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; return 1; }
     else
         warn "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping"
     fi
 
     # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
+    inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
     printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg"
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
+    inform "Adding DB2 instance to /etc/services file..."
     printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services"
 
     # Start the DB2 instance
     inform "Starting DB2 instance..."
-    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; exit 1; }
+    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
 
     # Enable Unicode
     inform "Enabling Unicode codepage..."
@@ -119,7 +121,7 @@ function checkStatusDb() {
 
     if [[ "${code}" != 0 && "${code}" != 1 && "${code}" != 2 && "${code}" != 3 ]]; then
         fail "${message}. Exit code: ${code}"
-        exit 1
+        return 1
     fi
 
 }
@@ -137,24 +139,24 @@ function createDatabase() {
         warn "${dbName} database is already created. Skipping"
     else
         su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >/dev/null"
-        checkStatusDb "${?}" "Unable to create database: ${dbName}" 
+        checkStatusDb "${?}" "Unable to create database: ${dbName}" || return 1
         su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >/dev/null" 
-        checkStatusDb "${?}" "Unable to grant rights on database: ${dbName}" 
+        checkStatusDb "${?}" "Unable to grant rights on database: ${dbName}" || return 1
         # Special handling for HOMEPAGE
         if [[ "${dbName}" == "HOMEPAGE" ]]; then
             su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >/dev/null"
-            checkStatusDb "${?}" "Unable to initialize data for database: ${dbName}"
+            checkStatusDb "${?}" "Unable to initialize data for database: ${dbName}" || return 1
             su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >/dev/null"
-            checkStatusDb "${?}" "Unable to run reorg on database: ${dbName}"
+            checkStatusDb "${?}" "Unable to run reorg on database: ${dbName}" || return 1
             su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >/dev/null"
-            checkStatusDb "${?}" "Unable to update stats for database: ${dbName}"
+            checkStatusDb "${?}" "Unable to update stats for database: ${dbName}" || return 1
         fi
         # Special handling for SNCOMM
         if [[ "${dbName}" == "SNCOMM" ]]; then
             su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >/dev/null"
-            checkStatusDb "${?}" "Unable to create table: Calendar"
+            checkStatusDb "${?}" "Unable to create table: Calendar" || return 1
             su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >/dev/null"
-            checkStatusDb "${?}" "Unable to grant rights on table: Calendar"
+            checkStatusDb "${?}" "Unable to grant rights on table: Calendar" || return 1
         fi
     fi
     
@@ -174,20 +176,20 @@ function createDatabases() {
     chown -R "db2inst1.db2iadm1" "${IC_DBWIZARD_PACKAGE}"
     
     # Create the databases
-    createDatabase "HOMEPAGE" "homepage"
-    createDatabase "FILES" "files"
-    createDatabase "PNS" "pushnotification"
-    createDatabase "OPNACT" "activities"
-    createDatabase "BLOGS" "blogs"
-    createDatabase "DOGEAR" "dogear"
-    createDatabase "SNCOMM" "communities"
-    createDatabase "FORUM" "forum"
-    createDatabase "METRICS" "metrics"
-    createDatabase "MOBILE" "mobile"
-    createDatabase "PEOPLEDB" "profiles"
-    createDatabase "WIKIS" "wikis"
-    createDatabase "FNGCD" "library.gcd"
-    createDatabase "FNOS" "library.os"
+    createDatabase "HOMEPAGE" "homepage" || return 1
+    createDatabase "FILES" "files" || return 1
+    createDatabase "PNS" "pushnotification" || return 1
+    createDatabase "OPNACT" "activities" || return 1
+    createDatabase "BLOGS" "blogs" || return 1
+    createDatabase "DOGEAR" "dogear" || return 1
+    createDatabase "SNCOMM" "communities" || return 1
+    createDatabase "FORUM" "forum" || return 1
+    createDatabase "METRICS" "metrics" || return 1
+    createDatabase "MOBILE" "mobile" || return 1
+    createDatabase "PEOPLEDB" "profiles" || return 1
+    createDatabase "WIKIS" "wikis" || return 1
+    createDatabase "FNGCD" "library.gcd" || return 1
+    createDatabase "FNOS" "library.os" || return 1
 
 }
 
@@ -195,7 +197,7 @@ function createDatabases() {
 function startDB2() {
 
     inform "Starting DB2 instance..."
-    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; exit 1; } 
+    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; } 
 
 }
 
@@ -207,20 +209,20 @@ function init() {
     # Download private resources
     if [[ -z "${IC_DBWIZARD_URL}" ]]; then
         fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
-        exit 1
+        return 1
     else
         inform "Downloading ${IC_DBWIZARD_URL}..." 
-        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; exit 1; }
+        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; return 1; }
     fi
 
     # Create the DB2 users and groups
-    createUsersAndGroups || exit 1
+    createUsersAndGroups || return 1
 
     # Create the DB2 instance
-    createInstance || exit 1
+    createInstance || return 1
 
     # Create the Connections databases
-    createDatabases || exit 1
+    createDatabases || return 1
 
     # Leave a marker in the container to indicate init is complete
     touch "${WORK_DIR}/init_complete"
@@ -238,7 +240,7 @@ function applyCR1Updates() {
 
     # Download update package
     inform "Downloading ${CR1_UPDATE_URL}..." 
-    curl -L -O -J -s -S -f "${CR1_UPDATE_URL}" || { fail "Download of ${CR1_UPDATE_URL} failed"; exit 1; }
+    curl -L -O -J -s -S -f "${CR1_UPDATE_URL}" || { fail "Download of ${CR1_UPDATE_URL} failed"; return 1; }
     
     # Unpack the update package
     inform "Unpacking database update scripts..."
@@ -260,7 +262,7 @@ function applyCR2Updates() {
 
     # Download update package
     # inform "Downloading ${CR2_UPDATE_URL}..." 
-    # curl -L -O -J -s -S -f "${CR2_UPDATE_URL}" || { fail "Download of ${CR2_UPDATE_URL} failed"; exit 1; }
+    # curl -L -O -J -s -S -f "${CR2_UPDATE_URL}" || { fail "Download of ${CR2_UPDATE_URL} failed"; return 1; }
     
     # Unpack the update package
     # inform "Unpacking database update scripts..."
