@@ -206,12 +206,6 @@ function init() {
     # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
     inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
     printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || warn "Unable to update db2nodes.cfg"
-    
-    return 1
-    
-    # Update the DB2SYSTEM registry variable
-    inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
-    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
     inform "Adding DB2 instance to /etc/services file..."
@@ -220,6 +214,10 @@ function init() {
     # Start the DB2 instance
     inform "Starting DB2 instance..."
     su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
+    
+    # Update the DB2SYSTEM registry variable (has to occur here, after starting DB2, and must run as root)
+    inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
+    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
 
     # Enable Unicode
     inform "Enabling Unicode codepage..."
