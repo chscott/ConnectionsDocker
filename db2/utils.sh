@@ -7,7 +7,7 @@ function log() {
     local severity="${1}"
     local message="${2}"
     local now="$(date '+%F %T')"
-    printf "%s %-16.16s: %s\n" "${now}" "${severity}" "${message}"
+    printf "%s %s: %s\n" "${now}" "${severity}" "${message}"
 
 }
 
@@ -15,7 +15,7 @@ function log() {
 function inform() {
 
     local message="${1}"
-    log "INFO" "${message}"
+    log "I" "${message}"
 
 }
 
@@ -23,7 +23,7 @@ function inform() {
 function warn() {
 
     local message="${1}"    
-    log "WARN" "${message}"
+    log "W" "${message}"
 
 }
 
@@ -31,7 +31,7 @@ function warn() {
 function fail() {
 
     local message="${1}"    
-    log "FAIL" "${message}"
+    log "F" "${message}"
 
 }
 
