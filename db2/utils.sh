@@ -172,10 +172,7 @@ function createDatabases() {
     local IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
     
     # If all databases are already created, just return
-    if [[ $(areAllDbsCreated) == 0 ]]; then
-        inform "All Connections databases are already created. Skipping creation"
-        return 0
-    fi
+    areAllDbsCreated && return 0
     
     inform "Creating Connections databases..."
     
