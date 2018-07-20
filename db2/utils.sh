@@ -117,7 +117,7 @@ function areAllDbsCreated() {
     for db in "${dbs[@]}"; do
         count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
         if [[ "${count}" = 0 ]]; then
-            info "At least one Connections database does not exist. Will attempt to create databases..."
+            inform "At least one Connections database does not exist. Will attempt to create databases..."
             return 1
         fi
     done
@@ -170,11 +170,11 @@ function createDatabases() {
     
     # If all databases are already created, just return
     if [[ $(areAllDbsCreated) == 0 ]]; then
-        info "All Connections databases are already created. Skipping creation"
+        inform "All Connections databases are already created. Skipping creation"
         return 0
     fi
     
-    info "Creating Connections databases..."
+    inform "Creating Connections databases..."
     
     # Download database wizard package
     if [[ -z "${IC_DBWIZARD_URL}" ]]; then
@@ -206,7 +206,7 @@ function createDatabases() {
     createDatabase "FNGCD" "library.gcd" || return 1
     createDatabase "FNOS" "library.os" || return 1
     
-    info "Completed creating Connections databases"
+    inform "Completed creating Connections databases"
 
 }
 
