@@ -1,0 +1,283 @@
+# Default setup URL. Can be overridden by environment variable when starting container
+SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2"
+
+# Print a log message with severity
+function log() {
+
+    local severity="${1}"
+    local message="${2}"
+    printf "%s: %s\n" "${severity}" "${message}"
+
+}
+
+# Print an information message
+function inform() {
+
+    local message="${1}"
+    log "INFO" "${message}"
+
+}
+
+# Print a warning message
+function warn() {
+
+    local message="${1}"    
+    log "WARN" "${message}"
+
+}
+
+# Print a failure message
+function fail() {
+
+    local message="${1}"    
+    log "FAIL" "${message}"
+
+}
+
+# Check status after adding/deleting user or group
+function checkUserGroupStatus() {
+
+    local code="${1}"
+    local entity="${2}"
+
+    if [[ "${code}" != 0 ]]; then
+        # Non-fatal error
+        if [[ "${code}" == 9 ]]; then
+            warn "${entity} already exists. Continuing"  
+        # Fatal
+        else
+            fail "Unable to create ${entity}. Exit code: ${code}"
+            exit 1
+        fi
+    fi
+
+}
+
+# Create the DB2 users and groups
+function createUsersAndGroups() {
+
+    # Add required groups
+    inform "Creating DB2 groups..."
+    groupadd -r "db2iadm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2iadm1"
+    groupadd -r "db2fsdm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fsdm1"
+    groupadd -r "dasadm1" 2>/dev/null || checkUserGroupStatus "${?}" "dasadm1"
+
+    # Add required users
+    inform "Creating DB2 users..."
+    useradd -r -m -d "/data/db2inst1" -g "db2iadm1" "db2inst1" 2>/dev/null || checkUserGroupStatus "${?}" "db2inst1"
+    printf "db2inst1:password" | chpasswd
+    useradd -r -m -d "/data/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fenc1"
+    printf "db2fenc1:password" | chpasswd
+    useradd -r -m -d "/data/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1"
+    printf "dasusr1:password" | chpasswd
+    useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" 
+    printf "lcuser:password" | chpasswd
+
+    # Increase open file limit for instance owner group
+    inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
+    printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf"
+    printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf"
+    
+}
+
+# Create the DB2 instance
+function createInstance() {
+
+    # Create the instance if it doesn't already exist
+    if [[ ! -d "/data/db2inst1/db2inst1" ]]; then
+        inform "Beginning creation of DB2 instance..."
+        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; exit 1; }
+    else
+        warn "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping"
+    fi
+
+    # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
+    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg"
+
+    # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
+    printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services"
+
+    # Start the DB2 instance
+    inform "Starting DB2 instance..."
+    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; exit 1; }
+
+    # Enable Unicode
+    inform "Enabling Unicode codepage..."
+    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" ||
+        warn "Unable to set DB2 codepage"
+
+    inform "Completed creation of DB2 instance"
+
+}
+
+# Check exit code of database operation. Per the DB2 doc, the -s option means an error if the exit code is not 0, 1, 2, or 3 
+# (3 is returned when one or more commands result in both codes 1 and 2)
+function checkStatusDb() {
+
+    local code="${1}"
+    local message="${2}"
+
+    if [[ "${code}" != 0 && "${code}" != 1 && "${code}" != 2 && "${code}" != 3 ]]; then
+        fail "${message}. Exit code: ${code}"
+        exit 1
+    fi
+
+}
+
+# Create the specified database
+function createDatabase() {
+
+    local dbName="${1}"
+    local dbDir="${2}"
+    
+    inform "Creating ${dbName} database..."
+    
+    count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${dbName}\"")
+    if [[ "${count}" > 0 ]]; then
+        warn "${dbName} database is already created. Skipping"
+    else
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >/dev/null"
+        checkStatusDb "${?}" "Unable to create database: ${dbName}" 
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >/dev/null" 
+        checkStatusDb "${?}" "Unable to grant rights on database: ${dbName}" 
+        # Special handling for HOMEPAGE
+        if [[ "${dbName}" == "HOMEPAGE" ]]; then
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >/dev/null"
+            checkStatusDb "${?}" "Unable to initialize data for database: ${dbName}"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >/dev/null"
+            checkStatusDb "${?}" "Unable to run reorg on database: ${dbName}"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >/dev/null"
+            checkStatusDb "${?}" "Unable to update stats for database: ${dbName}"
+        fi
+        # Special handling for SNCOMM
+        if [[ "${dbName}" == "SNCOMM" ]]; then
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >/dev/null"
+            checkStatusDb "${?}" "Unable to create table: Calendar"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >/dev/null"
+            checkStatusDb "${?}" "Unable to grant rights on table: Calendar"
+        fi
+    fi
+    
+    inform "Completed creating ${dbName}"
+
+}
+
+# Create the Connections databases
+function createDatabases() {
+
+    local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
+    local IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
+
+    # Unpack the database creation scripts
+    inform "Unpacking database creation scripts..."
+    tar -xf "${IC_DBWIZARD_PACKAGE}"
+    chown -R "db2inst1.db2iadm1" "${IC_DBWIZARD_PACKAGE}"
+    
+    # Create the databases
+    createDatabase "HOMEPAGE" "homepage"
+    createDatabase "FILES" "files"
+    createDatabase "PNS" "pushnotification"
+    createDatabase "OPNACT" "activities"
+    createDatabase "BLOGS" "blogs"
+    createDatabase "DOGEAR" "dogear"
+    createDatabase "SNCOMM" "communities"
+    createDatabase "FORUM" "forum"
+    createDatabase "METRICS" "metrics"
+    createDatabase "MOBILE" "mobile"
+    createDatabase "PEOPLEDB" "profiles"
+    createDatabase "WIKIS" "wikis"
+    createDatabase "FNGCD" "library.gcd"
+    createDatabase "FNOS" "library.os"
+
+}
+
+# Start DB2
+function startDB2() {
+
+    inform "Starting DB2 instance..."
+    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; exit 1; } 
+
+}
+
+# Initialize DB2 for Connections
+function init() {
+
+    inform "Beginning Connections database initialization..."
+
+    # Download public resources
+    inform "Downloading setup resources from ${SETUP_URL}..."
+    curl -L -O -J -s -S -f "${SETUP_URL}/createUsers.sh" || { fail "Download of createUsers.sh failed"; exit 1; }
+    curl -L -O -J -s -S -f "${SETUP_URL}/createInstance.sh" || { fail "Download of createInstance.sh failed"; exit 1; }
+    curl -L -O -J -s -S -f "${SETUP_URL}/createDatabases.sh" || { fail "Download of createDatabases.sh failed"; exit 1; }
+
+    # Make scripts executable
+    chmod +x "${WORK_DIR}/createUsers.sh" "${WORK_DIR}/createInstance.sh" "${WORK_DIR}/createDatabases.sh" 
+
+    # Download private resources
+    if [[ -z "${IC_DBWIZARD_URL}" ]]; then
+        fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
+        exit 1
+    else
+        inform "Downloading ${IC_DBWIZARD_URL}..." 
+        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; exit 1; }
+    fi
+
+    # Create the DB2 users
+    "${WORK_DIR}/createUsers.sh" || exit 1
+
+    # Create the DB2 instance
+    "${WORK_DIR}/createInstance.sh" || exit 1
+
+    # Create the Connections databases
+    "${WORK_DIR}/createDatabases.sh" || exit 1
+
+    # Leave a marker in the container to indicate init is complete
+    touch "${WORK_DIR}/init_complete"
+
+    inform "Completed Connections database initialization..."
+
+}
+
+# Apply CR1 database updates
+function applyCR1Updates() {
+
+    local CR1_UPDATE_PACKAGE="$(echo "${CR1_UPDATE_URL}" | awk -F "/" '{print $NF}')"
+    
+    inform "Beginning CR1 database updates..."
+
+    # Download update package
+    inform "Downloading ${CR1_UPDATE_URL}..." 
+    curl -L -O -J -s -S -f "${CR1_UPDATE_URL}" || { fail "Download of ${CR1_UPDATE_URL} failed"; exit 1; }
+    
+    # Unpack the update package
+    inform "Unpacking database update scripts..."
+    unzip -qq "${CR1_UPDATE_PACKAGE}"
+
+    # Apply the updates
+    inform "Database update not yet implemented"
+    
+    inform "Completed CR1 database updates"
+
+}
+
+# Apply CR2 database updates
+function applyCR2Updates() {
+
+    local CR2_UPDATE_PACKAGE="$(echo "${CR2_UPDATE_URL}" | awk -F "/" '{print $NF}')"
+    
+    inform "Beginning CR2 database updates..."
+
+    # Download update package
+    # inform "Downloading ${CR2_UPDATE_URL}..." 
+    # curl -L -O -J -s -S -f "${CR2_UPDATE_URL}" || { fail "Download of ${CR2_UPDATE_URL} failed"; exit 1; }
+    
+    # Unpack the update package
+    # inform "Unpacking database update scripts..."
+    # unzip -qq "${CR1_UPDATE_PACKAGE}"
+
+    # Apply the updates
+    inform "Database update not yet implemented"
+    
+    inform "Completed CR2 database updates"
+
+}
