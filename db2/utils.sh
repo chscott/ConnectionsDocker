@@ -6,7 +6,8 @@ function log() {
 
     local severity="${1}"
     local message="${2}"
-    printf "%s: %s\n" "${severity}" "${message}"
+    local now="$(date '+%F %T')"
+    printf "%s %-16.16s: %s\n" "${now}" "${severity}" "${message}"
 
 }
 
@@ -118,6 +119,8 @@ function areAllDbsCreated() {
         count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
         if [[ "${count}" == 0 ]]; then
             return 1
+        else
+            inform "${db} already exists"
         fi
     done
 
@@ -168,6 +171,7 @@ function createDatabases() {
     local IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
     
     # If all databases are already created, just return
+    inform "Checking to see if databases need to be created..."
     areAllDbsCreated && return 0
     
     inform "Creating Connections databases..."
