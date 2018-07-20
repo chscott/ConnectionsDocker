@@ -205,11 +205,15 @@ function init() {
     
     # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
     inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
-    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg"
+    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || warn "Unable to update db2nodes.cfg"
+    
+    # Update the DB2SYSTEM registry variable
+    inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
+    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
     inform "Adding DB2 instance to /etc/services file..."
-    printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services"
+    printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || warn "Unable to update /etc/services"
 
     # Start the DB2 instance
     inform "Starting DB2 instance..."
@@ -217,8 +221,7 @@ function init() {
 
     # Enable Unicode
     inform "Enabling Unicode codepage..."
-    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" ||
-        warn "Unable to set DB2 codepage"
+    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" || warn "Unable to set DB2 codepage"
 
     # Create the Connections databases
     createDatabases || return 1
