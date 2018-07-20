@@ -112,14 +112,12 @@ function checkStatusDb() {
 # Helper function to determine if all Connections databases have been created
 function areAllDbsCreated() {
 
-    dbs=("HOMEPAGE" "FILES" "PNS" "OPNACT" "BLOGS" "DOGEAR" "SNCOMM" "FORUM" "METRICS" "MOBILE" "PEOPLEDB" "WIKIS" "FNGCD" "FNOS")
+    local requiredDbs=("HOMEPAGE" "FILES" "PNS" "OPNACT" "BLOGS" "DOGEAR" "SNCOMM" "FORUM" "METRICS" "MOBILE" "PEOPLEDB" "WIKIS" "FNGCD" "FNOS")
+    local installedDbs="($(su - "db2inst1" -c "db2 list database directory"))"
 
     # Loop through the databases and test if each exists. If any database does not exist, immediately return false
-    for db in "${dbs[@]}"; do
-        count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
-        if [[ "${count}" == 0 ]]; then
-            return 1
-        fi
+    for db in "${requiredDbs[@]}"; do
+        echo "${installedDbs}" | grep "Database name" | grep "${db}" || return 1
     done
 
 }
