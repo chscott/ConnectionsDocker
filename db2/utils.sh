@@ -116,7 +116,7 @@ function areAllDbsCreated() {
     # Loop through the databases and test if each exists. If any database does not exist, immediately return false
     for db in "${dbs[@]}"; do
         count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
-        if [[ "${count}" = 0 ]]; then
+        if [[ "${count}" == 0 ]]; then
             inform "At least one Connections database does not exist. Will attempt to create databases..."
             return 1
         fi
