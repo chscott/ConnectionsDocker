@@ -119,8 +119,6 @@ function areAllDbsCreated() {
         count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
         if [[ "${count}" == 0 ]]; then
             return 1
-        else
-            inform "${db} already exists"
         fi
     done
 
