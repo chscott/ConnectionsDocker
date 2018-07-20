@@ -83,9 +83,10 @@ function createUsersAndGroups() {
 # Create the DB2 instance
 function createInstance() {
 
+    inform "Beginning creation of DB2 instance..."
+    
     # Create the instance if it doesn't already exist
     if [[ ! -d "/data/db2inst1/db2inst1" ]]; then
-        inform "Beginning creation of DB2 instance..."
         "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; return 1; }
     else
         warn "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping"
