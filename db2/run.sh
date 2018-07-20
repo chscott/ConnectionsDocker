@@ -54,7 +54,7 @@ elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     # No need to start DB2 since it was started during init
 elif [[ -f "${WORK_DIR}/init_complete" ]]; then
-    inform "Run tasks: 1) Start DB2
+    inform "Run tasks: 1) Start DB2"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
 
