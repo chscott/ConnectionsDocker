@@ -207,10 +207,10 @@ function init() {
     inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
     printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || warn "Unable to update db2nodes.cfg"
     
+    return 1
+    
     # Update the DB2SYSTEM registry variable
     inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
-    inform "Current registry variables:"
-    "/data/db2inst1/sqllib/adm/db2set" -g
     "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
