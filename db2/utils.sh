@@ -204,15 +204,6 @@ function init() {
 
     inform "Beginning Connections database initialization..."
 
-    # Download public resources
-    inform "Downloading setup resources from ${SETUP_URL}..."
-    curl -L -O -J -s -S -f "${SETUP_URL}/createUsers.sh" || { fail "Download of createUsers.sh failed"; exit 1; }
-    curl -L -O -J -s -S -f "${SETUP_URL}/createInstance.sh" || { fail "Download of createInstance.sh failed"; exit 1; }
-    curl -L -O -J -s -S -f "${SETUP_URL}/createDatabases.sh" || { fail "Download of createDatabases.sh failed"; exit 1; }
-
-    # Make scripts executable
-    chmod +x "${WORK_DIR}/createUsers.sh" "${WORK_DIR}/createInstance.sh" "${WORK_DIR}/createDatabases.sh" 
-
     # Download private resources
     if [[ -z "${IC_DBWIZARD_URL}" ]]; then
         fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
@@ -222,14 +213,14 @@ function init() {
         curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; exit 1; }
     fi
 
-    # Create the DB2 users
-    "${WORK_DIR}/createUsers.sh" || exit 1
+    # Create the DB2 users and groups
+    createUsersAndGroups || exit 1
 
     # Create the DB2 instance
-    "${WORK_DIR}/createInstance.sh" || exit 1
+    createInstance || exit 1
 
     # Create the Connections databases
-    "${WORK_DIR}/createDatabases.sh" || exit 1
+    createDatabases || exit 1
 
     # Leave a marker in the container to indicate init is complete
     touch "${WORK_DIR}/init_complete"
