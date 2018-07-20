@@ -108,6 +108,22 @@ function checkStatusDb() {
 
 }
 
+# Helper function to determine if all Connections databases have been created
+function areAllDbsCreated() {
+
+    dbs=("HOMEPAGE" "FILES" "PNS" "OPNACT" "BLOGS" "DOGEAR" "SNCOMM" "FORUM" "METRICS" "MOBILE" "PEOPLEDB" "WIKIS" "FNGCD" "FNOS")
+
+    # Loop through the databases and test if each exists. If any database does not exist, immediately return false
+    for db in "${dbs[@]}"; do
+        count=$(su - "db2inst1" -c "db2 list database directory | grep 'Database name' | grep -c \"${db}\"")
+        if [[ "${count}" = 0 ]]; then
+            info "At least one Connections database does not exist. Will attempt to create databases..."
+            return 1
+        fi
+    done
+
+}
+
 # Create the specified database
 function createDatabase() {
 
@@ -151,6 +167,23 @@ function createDatabases() {
 
     local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
     local IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
+    
+    # If all databases are already created, just return
+    if [[ $(areAllDbsCreated) == 0 ]]; then
+        info "All Connections databases are already created. Skipping creation"
+        return 0
+    fi
+    
+    info "Creating Connections databases..."
+    
+    # Download database wizard package
+    if [[ -z "${IC_DBWIZARD_URL}" ]]; then
+        fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
+        return 1
+    else
+        inform "Downloading ${IC_DBWIZARD_URL}..." 
+        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; return 1; }
+    fi
 
     # Unpack the database creation scripts
     inform "Unpacking database creation scripts..."
@@ -172,6 +205,8 @@ function createDatabases() {
     createDatabase "WIKIS" "wikis" || return 1
     createDatabase "FNGCD" "library.gcd" || return 1
     createDatabase "FNOS" "library.os" || return 1
+    
+    info "Completed creating Connections databases"
 
 }
 
@@ -187,15 +222,6 @@ function startDB2() {
 function init() {
 
     inform "Beginning Connections database initialization..."
-
-    # Download private resources
-    if [[ -z "${IC_DBWIZARD_URL}" ]]; then
-        fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
-        return 1
-    else
-        inform "Downloading ${IC_DBWIZARD_URL}..." 
-        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; return 1; }
-    fi
 
     # Create the DB2 users and groups
     createUsersAndGroups || return 1
