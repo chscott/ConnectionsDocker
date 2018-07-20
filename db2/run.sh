@@ -32,23 +32,29 @@ curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh"
 inform "Starting DB2 run script..."
 
 if [[ ! -z "${CR2_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Apply CR2 updates, 2) Start DB2"
     applyCR2Updates || warn "CR2 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 elif [[ ! -z "${CR1_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Apply CR1 updates, 2) Start DB2"
     applyCR1Updates || warn "CR1 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 elif [[ ! -z "${CR2_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Initialize DB2 for Connections, 2) Apply CR2 updates, 3) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     applyCR2Updates "CR2 database updates failed"
     # No need to start DB2 since it was started during init
 elif [[ ! -z "${CR1_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Initialize DB2 for Connections, 2) Apply CR1 updates, 3) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     applyCR1Updates warn "CR1 database updates failed"
     # No need to start DB2 since it was started during init
 elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Initialize DB2 for Connections, 2) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     # No need to start DB2 since it was started during init
 elif [[ -f "${WORK_DIR}/init_complete" ]]; then
+    inform "Run tasks: 1) Start DB2
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
 
