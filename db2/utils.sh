@@ -209,6 +209,8 @@ function init() {
     
     # Update the DB2SYSTEM registry variable
     inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
+    inform "Current registry variables:"
+    "/data/db2inst1/sqllib/adm/db2set" -g
     "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
