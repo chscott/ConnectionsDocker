@@ -101,7 +101,7 @@ function createInstance() {
         "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; return 1; }
         inform "Completed creation of DB2 instance"
     else
-        warn "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping creation"
+        inform "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping creation"
     fi
 
 }
