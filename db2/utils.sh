@@ -168,7 +168,7 @@ function createDatabases() {
     
     # If all databases are already created, just return
     inform "Checking to see if databases need to be created..."
-    areAllDbsCreated && return 0
+    areAllDbsCreated && inform "Databases are already created" && return 0
     
     inform "Creating Connections databases..."
     
