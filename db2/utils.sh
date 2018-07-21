@@ -117,7 +117,8 @@ function areAllDbsCreated() {
 
     # Loop through the databases and test if each exists. If any database does not exist, immediately return false
     for db in "${requiredDbs[@]}"; do
-        local found=$(echo "${installedDbs}" | grep "Database name" | grep "${db}") || return 1
+        inform "Testing to see if ${db} already exists..."
+        local found=$(echo "${installedDbs}" | grep "Database name" | grep "${db}") && inform "${db} already exists" || return 1
     done
 
 }
