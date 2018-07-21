@@ -167,7 +167,7 @@ function createDatabase() {
 function createDatabases() {
 
     local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
-    local IC_DBWIZARD_PACKAGE="$(echo "${IC_DBWIZARD_URL}" | awk -F "/" '{print $NF}')"
+    local IC_DBWIZARD_PACKAGE="$(echo "${DB_WIZARDS_URL}" | awk -F "/" '{print $NF}')"
     
     # If all databases are already created, just return
     inform "Checking to see if databases need to be created..."
@@ -176,12 +176,12 @@ function createDatabases() {
     inform "Creating Connections databases..."
     
     # Download database wizard package
-    if [[ -z "${IC_DBWIZARD_URL}" ]]; then
-        fail "The IC_DBWIZARD_URL environment variable must be specified when running the container"
+    if [[ -z "${DB_WIZARDS_URL}" ]]; then
+        fail "The DB_WIZARDS_URL environment variable must be specified when running the container"
         return 1
     else
-        inform "Downloading ${IC_DBWIZARD_URL}..." 
-        curl -L -O -J -s -S -f "${IC_DBWIZARD_URL}" || { fail "Download of ${IC_DBWIZARD_URL} failed"; return 1; }
+        inform "Downloading ${DB_WIZARDS_URL}..." 
+        curl -L -O -J -s -S -f "${DB_WIZARDS_URL}" || { fail "Download of ${DB_WIZARDS_URL} failed"; return 1; }
     fi
 
     # Unpack the database creation scripts
