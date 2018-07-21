@@ -18,6 +18,7 @@ function log() {
         printf "${WARN_COLOR}%s %s: %s${NORMAL_COLOR}\n" "${now}" "${severity}" "${message}"
     elif [[ "${severity}" == "F" ]]; then
         printf "${FAIL_COLOR}%s %s: %s${NORMAL_COLOR}\n" "${now}" "${severity}" "${message}"
+    fi
         
 }
 
