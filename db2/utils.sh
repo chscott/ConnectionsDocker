@@ -282,7 +282,7 @@ function applyCR1Updates() {
     
     # Unpack the update package
     inform "Unpacking database update scripts..."
-    unzip -qq "${CR1_UPDATE_PACKAGE}"
+    unzip -oqq "${CR1_UPDATE_PACKAGE}"
 
     # Apply the updates
     inform "Database update not yet implemented"
@@ -304,7 +304,7 @@ function applyCR2Updates() {
     
     # Unpack the update package
     # inform "Unpacking database update scripts..."
-    # unzip -qq "${CR1_UPDATE_PACKAGE}"
+    # unzip -oqq "${CR1_UPDATE_PACKAGE}"
 
     # Apply the updates
     inform "Database update not yet implemented"
