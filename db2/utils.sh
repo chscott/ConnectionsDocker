@@ -299,14 +299,12 @@ function applyCR1Updates() {
     chown -R "db2inst1.db2iadm1" "${CR1_UPDATE_PACKAGE}"
 
     # Apply the updates
-    set -x
     su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >${WORK_DIR}/cr1_updates.log 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Activities" || return 1
     su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >${WORK_DIR}/cr1_updates.log 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Homepage" || return 1
     
     inform "Completed CR1 database updates"
-    set +x
 
 }
 
