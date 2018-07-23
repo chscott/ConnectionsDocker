@@ -233,9 +233,12 @@ function init() {
     
     # Increase open file limit for instance owner group
     inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
-    grep "@db2iadm1" "/etc/security/limits.conf" ||
-        printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf" &&
-        printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf"
+    if [[ $(grep -c "@db2iadm1" "/etc/security/limits.conf") > 0 ]]; then
+        warn "Entry already exists in /etc/security/limits.conf for @db2iadm. Manual review recommended"
+    else
+        printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"
+        printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"
+    fi
 
     # Create the DB2 instance
     createInstance || return 1
@@ -246,9 +249,11 @@ function init() {
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
     inform "Adding DB2 instance to /etc/services file..."
-    grep "DB2_db2inst1" "/etc/services" >/dev/null ||
-        printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || 
-        warn "Unable to update /etc/services"
+    if [[ $(grep -c "DB2_db2inst1" "/etc/services") > 0 ]]; then 
+        warn "Entry already exists in /etc/services for DB2_db2inst1. Manual review recommended"
+    else
+        printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || warn "Unable to update /etc/services"
+    fi
 
     # Start the DB2 instance
     inform "Starting DB2 instance..."
