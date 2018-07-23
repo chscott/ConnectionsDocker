@@ -143,24 +143,24 @@ function createDatabase() {
     if [[ "${count}" > 0 ]]; then
         warn "${dbName} database is already created. Skipping"
     else
-        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >|/data/db2inst1/initDbs.log 2>&1"
         checkStatusDb "${?}" "Unable to create database: ${dbName}" || return 1
-        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >>/data/db2inst1/initDbs.log 2>&1"
         checkStatusDb "${?}" "Unable to grant rights on database: ${dbName}" || return 1
         # Special handling for HOMEPAGE
         if [[ "${dbName}" == "HOMEPAGE" ]]; then
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >>/data/db2inst1/initDbs.log 2>&1"
             checkStatusDb "${?}" "Unable to initialize data for database: ${dbName}" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >>/data/db2inst1/initDbs.log 2>&1"
             checkStatusDb "${?}" "Unable to run reorg on database: ${dbName}" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >>/data/db2inst1/initDbs.log 2>&1"
             checkStatusDb "${?}" "Unable to update stats for database: ${dbName}" || return 1
         fi
         # Special handling for SNCOMM
         if [[ "${dbName}" == "SNCOMM" ]]; then
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >>/data/db2inst1/initDbs.log 2>&1"
             checkStatusDb "${?}" "Unable to create table: Calendar" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >>/data/db2inst1/initDbs.log\ 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >>/data/db2inst1/initDbs.log 2>&1"
             checkStatusDb "${?}" "Unable to grant rights on table: Calendar" || return 1
         fi
     fi
@@ -194,9 +194,6 @@ function createDatabases() {
     inform "Unpacking database creation scripts..."
     tar -xf "${IC_DBWIZARD_PACKAGE}"
     chown -R "db2inst1.db2iadm1" "${IC_DBWIZARD_PACKAGE}"
-    
-    # Clear the log
-    >|"/data/db2inst1/initDbs.log"
     
     # Create the databases
     createDatabase "HOMEPAGE" "homepage" || return 1
@@ -309,12 +306,9 @@ function applyCR1Updates() {
     # Start the DB2 instance
     inform "Starting DB2 instance..."
     su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
-    
-    # Clear the log
-    >|"/data/db2inst1/cr1_updates.log"
 
     # Apply the updates
-    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >>/data/db2inst1/cr1_updates.log 2>&1"
+    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|/data/db2inst1/cr1_updates.log 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Activities" || return 1
     su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr1_updates.log 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Homepage" || return 1
