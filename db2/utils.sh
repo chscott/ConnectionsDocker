@@ -285,7 +285,7 @@ function init() {
 function applyCR1Updates() {
 
     local CR1_UPDATE_PACKAGE="$(echo "${CR1_UPDATE_URL}" | awk -F "/" '{print $NF}')"
-    local updateDir="60cr1-database-updates*/From-60"
+    local CR1_UPDATE_DIR="60cr1-database-updates*/From-60"
     
     inform "Beginning CR1 database updates..."
 
@@ -298,9 +298,9 @@ function applyCR1Updates() {
     unzip -oqq "${CR1_UPDATE_PACKAGE}"
 
     # Apply the updates
-    su - "db2inst1" -c "db2 -td@ -vf \"${DB_SCRIPT_DIR}/${updateDir}/db2/60-CR1-activities-db2.sql\" >/dev/null"
+    su - "db2inst1" -c "db2 -td@ -vf \"${WORK_DIR}/${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >/dev/null"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Activities" || return 1
-    su - "db2inst1" -c "db2 -td@ -vf \"${DB_SCRIPT_DIR}/${updateDir}/db2/60-CR1-homepage-db2.sql\" >/dev/null"
+    su - "db2inst1" -c "db2 -td@ -vf \"${WORK_DIR}/${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >/dev/null"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Homepage" || return 1
     
     inform "Completed CR1 database updates"
