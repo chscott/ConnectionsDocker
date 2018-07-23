@@ -84,11 +84,6 @@ function createUsersAndGroups() {
     printf "dasusr1:password" | chpasswd
     useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" 
     printf "lcuser:password" | chpasswd
-
-    # Increase open file limit for instance owner group
-    inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
-    printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf"
-    printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf"
     
 }
 
@@ -235,6 +230,12 @@ function init() {
 
     # Create the DB2 users and groups
     createUsersAndGroups || return 1
+    
+    # Increase open file limit for instance owner group
+    inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
+    grep "@db2iadm1" "/etc/security/limits.conf" ||
+        printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf" &&
+        printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf"
 
     # Create the DB2 instance
     createInstance || return 1
@@ -245,7 +246,9 @@ function init() {
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
     inform "Adding DB2 instance to /etc/services file..."
-    printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || warn "Unable to update /etc/services"
+    grep "DB2_db2inst1" "/etc/services" >/dev/null ||
+        printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || 
+        warn "Unable to update /etc/services"
 
     # Start the DB2 instance
     inform "Starting DB2 instance..."
