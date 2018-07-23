@@ -5,8 +5,8 @@
 #
 # If init has not occurred, do the init. This should only occur the first time the container is started.
 # The init process will create the database users and groups, create the instance, and create Connections
-# databases. At the end of init, an init_complete file will be created in the setup directory as a flag
-# to indicate init has already been done.
+# databases. At the end of init, an init_complete file will be created in the instance log directory as a 
+# flag to indicate init has already been done.
 
 # If update environment variables are set, the corresponding updates for that release level will be 
 # applied. Update variables take the form CR*_UPDATE_URL, where * is the Cumulative Refresh number
@@ -31,34 +31,34 @@ curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh"
 
 inform "Starting DB2 run script..."
 
-if [[ ! -z "${CR2_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
+if [[ ! -z "${CR2_UPDATE_URL}" && -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Apply CR2 updates, 2) Start DB2"
     applyCR2Updates || warn "CR2 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
     
-elif [[ ! -z "${CR1_UPDATE_URL}" && -f "${WORK_DIR}/init_complete" ]]; then
+elif [[ ! -z "${CR1_UPDATE_URL}" && -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Apply CR1 updates, 2) Start DB2"
     applyCR1Updates || warn "CR1 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
     
-elif [[ ! -z "${CR2_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
+elif [[ ! -z "${CR2_UPDATE_URL}" && ! -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Initialize DB2 for Connections, 2) Apply CR2 updates, 3) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     applyCR2Updates "CR2 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
     
-elif [[ ! -z "${CR1_UPDATE_URL}" && ! -f "${WORK_DIR}/init_complete" ]]; then
+elif [[ ! -z "${CR1_UPDATE_URL}" && ! -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Initialize DB2 for Connections, 2) Apply CR1 updates, 3) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     applyCR1Updates warn "CR1 database updates failed"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
     
-elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
+elif [[ ! -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Initialize DB2 for Connections, 2) Start DB2"
     init || { fail "DB2 init failed. Exiting"; exit 1; }
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
     
-elif [[ -f "${WORK_DIR}/init_complete" ]]; then
+elif [[ -f "/data/db2inst1/sqllib/log/init_complete" ]]; then
     inform "Run tasks: 1) Start DB2"
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
