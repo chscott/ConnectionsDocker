@@ -275,7 +275,7 @@ function init() {
     su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
 
     # Leave a marker in the container to indicate init is complete
-    touch "/data/db2inst1/sqllib/log/init_complete"
+    touch "${WORK_DIR}/init_complete"
 
     inform "Completed Connections database initialization..."
 
