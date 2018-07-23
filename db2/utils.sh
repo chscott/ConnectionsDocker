@@ -285,7 +285,7 @@ function init() {
 function applyCR1Updates() {
 
     local CR1_UPDATE_PACKAGE="$(echo "${CR1_UPDATE_URL}" | awk -F "/" '{print $NF}')"
-    local CR1_UPDATE_DIR="60cr1-database-updates*/From-60"
+    local CR1_UPDATE_DIR="60cr1-database-updates_20171128-1036/From-60"
     
     inform "Beginning CR1 database updates..."
 
