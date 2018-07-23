@@ -298,12 +298,14 @@ function applyCR1Updates() {
     unzip -oqq "${CR1_UPDATE_PACKAGE}"
 
     # Apply the updates
+    set -x
     su - "db2inst1" -c "db2 -td@ -vf \"${WORK_DIR}/${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >/dev/null"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Activities" || return 1
     su - "db2inst1" -c "db2 -td@ -vf \"${WORK_DIR}/${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >/dev/null"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Homepage" || return 1
     
     inform "Completed CR1 database updates"
+    set +x
 
 }
 
