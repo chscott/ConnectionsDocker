@@ -261,6 +261,10 @@ function init() {
 
     # Create the Connections databases
     createDatabases || return 1
+    
+    # Stop the DB2 instance
+    inform "Stopping DB2 instance..."
+    su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
 
     # Leave a marker in the container to indicate init is complete
     touch "${WORK_DIR}/init_complete"
