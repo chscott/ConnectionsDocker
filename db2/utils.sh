@@ -195,6 +195,9 @@ function createDatabases() {
     tar -xf "${IC_DBWIZARD_PACKAGE}"
     chown -R "db2inst1.db2iadm1" "${IC_DBWIZARD_PACKAGE}"
     
+    # Clear the log
+    >|"~/initDbs.log"
+    
     # Create the databases
     createDatabase "HOMEPAGE" "homepage" || return 1
     createDatabase "FILES" "files" || return 1
@@ -301,6 +304,9 @@ function applyCR1Updates() {
     # Start the DB2 instance
     inform "Starting DB2 instance..."
     su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
+    
+    # Clear the log
+    >|"~/cr1_updates.log"
 
     # Apply the updates
     su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >>~/cr1_updates.log 2>&1"
