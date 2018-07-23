@@ -252,7 +252,7 @@ function init() {
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
     inform "Adding DB2 instance to /etc/services file..."
-    if [[ $(grep -c "DB2_db2inst1" "/etc/services") > 0 ]]; then 
+    if [[ $(grep "DB2_db2inst1" "/etc/services" | grep -c 50000) > 0 ]]; then 
         warn "Entry already exists in /etc/services for DB2_db2inst1. Manual review recommended"
     else
         printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || warn "Unable to update /etc/services"
