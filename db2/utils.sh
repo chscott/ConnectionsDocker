@@ -224,7 +224,7 @@ function createDatabases() {
 function startDB2() {
 
     inform "Starting DB2 instance..."
-    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; } 
+    su - "db2inst1" -c "exec db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; } 
 
 }
 
