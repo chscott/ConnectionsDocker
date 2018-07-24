@@ -287,6 +287,7 @@ function applyCR1Updates() {
     local CR1_UPDATE_PACKAGE="$(echo "${CR1_UPDATE_URL}" | awk -F "/" '{print $NF}')"
     local CR1_UPDATE_DIR="${WORK_DIR}/60cr1-database-updates_20171128-1036/From-60"
     
+    # See if CR1 was already applied. If so, do nothing
     if [[ -f "/data/db2inst1/sqllib/log/cr1_complete" ]]; then
         warn "CR1 update was requested, but it was previously applied. Skipping"
         return 0
@@ -328,19 +329,78 @@ function applyCR1Updates() {
 function applyCR2Updates() {
 
     local CR2_UPDATE_PACKAGE="$(echo "${CR2_UPDATE_URL}" | awk -F "/" '{print $NF}')"
+    local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60"
+    
+    # See if CR2 was already applied. If so, do nothing
+    if [[ -f "/data/db2inst1/sqllib/log/cr2_complete" ]]; then
+        warn "CR2 update was requested, but it was previously applied. Skipping"
+        return 0
+    fi
     
     inform "Beginning CR2 database updates..."
 
     # Download update package
-    # inform "Downloading ${CR2_UPDATE_URL}..." 
-    # curl -L -O -J -s -S -f "${CR2_UPDATE_URL}" || { fail "Download of ${CR2_UPDATE_URL} failed"; return 1; }
+    inform "Downloading ${CR2_UPDATE_URL}..." 
+    curl -L -O -J -s -S -f "${CR2_UPDATE_URL}" || { fail "Download of ${CR2_UPDATE_URL} failed"; return 1; }
     
     # Unpack the update package
-    # inform "Unpacking database update scripts..."
-    # unzip -oqq "${CR1_UPDATE_PACKAGE}"
-
-    # Apply the updates
-    inform "Database update not yet implemented"
+    inform "Unpacking database update scripts..."
+    unzip -oqq "${CR2_UPDATE_PACKAGE}"
+    chown -R "db2inst1.db2iadm1" "${CR2_UPDATE_PACKAGE}"
+    
+    # Start the DB2 instance
+    inform "Starting DB2 instance..."
+    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
+    
+    # See if CR1 was already applied. If so, the updates need to be from CR1. If not, they are from the base release
+    if [[ -f "/data/db2inst1/sqllib/log/cr1_complete" ]]; then 
+        inform "CR1 was previously applied. Will apply CR1 to CR2 updates"
+        local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60CR1-60IFR1"
+        # Apply the updates
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
+    else
+        inform "CR1 was not previously applied. Will apply Base to CR2 updates"
+        local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60"
+        # Apply the updates
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Activities" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+            checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
+    fi
+        
+    # Stop the DB2 instance
+    inform "Stopping DB2 instance..."
+    su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
+    
+    # Leave a marker in the container to indicate CR2 updates are complete
+    touch "/data/db2inst1/sqllib/log/cr2_complete"
     
     inform "Completed CR2 database updates"
 
