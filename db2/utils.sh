@@ -356,19 +356,19 @@ function applyCR2Updates() {
         inform "CR1 was previously applied. Will apply CR1 to CR2 updates"
         local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60CR1-60IFR1"
         # Apply the updates
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
     else
         inform "CR1 was not previously applied. Will apply Base to CR2 updates"
@@ -376,21 +376,21 @@ function applyCR2Updates() {
         # Apply the updates
         su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Activities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
     fi
         
