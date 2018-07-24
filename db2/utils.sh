@@ -302,7 +302,7 @@ function applyCR1Updates() {
     # Unpack the update package
     inform "Unpacking database update scripts..."
     unzip -oqq "${CR1_UPDATE_PACKAGE}"
-    chown -R "db2inst1.db2iadm1" "${CR1_UPDATE_PACKAGE}"
+    chown -R "db2inst1.db2iadm1" "${WORK_DIR}/60cr1-database-updates_20171128-1036"
     
     # Start the DB2 instance
     inform "Starting DB2 instance..."
@@ -329,7 +329,6 @@ function applyCR1Updates() {
 function applyCR2Updates() {
 
     local CR2_UPDATE_PACKAGE="$(echo "${CR2_UPDATE_URL}" | awk -F "/" '{print $NF}')"
-    local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60"
     
     # See if CR2 was already applied. If so, do nothing
     if [[ -f "/data/db2inst1/sqllib/log/cr2_complete" ]]; then
@@ -346,7 +345,7 @@ function applyCR2Updates() {
     # Unpack the update package
     inform "Unpacking database update scripts..."
     unzip -oqq "${CR2_UPDATE_PACKAGE}"
-    chown -R "db2inst1.db2iadm1" "${CR2_UPDATE_PACKAGE}"
+    chown -R "db2inst1.db2iadm1" "${WORK_DIR}/60cr2-database-updates"
     
     # Start the DB2 instance
     inform "Starting DB2 instance..."
