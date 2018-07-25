@@ -183,7 +183,7 @@ function createDatabases() {
     
     # Download database wizard package
     if [[ -z "${DB_WIZARDS_URL}" ]]; then
-        fail "The DB_WIZARDS_URL environment variable must be specified when running the container"
+        fail "The DB_WIZARDS_URL environment variable must be specified to create Connections databases"
         return 1
     else
         inform "Downloading ${DB_WIZARDS_URL}..." 
