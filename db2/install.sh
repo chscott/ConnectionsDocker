@@ -4,7 +4,13 @@ WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DB2_INSTALL_PACKAGE="$(echo "${DB2_INSTALL_URL}" | awk -F "/" '{print $NF}')"
 DB2_LICENSE_PACKAGE="$(echo "${DB2_LICENSE_URL}" | awk -F "/" '{print $NF}')"
 
-# Source prereq scripts
+# Download common utilities. SETUP_URL can be overridden by setting it as an environment variable when running
+# the container. For example, SETUP_URL=ftp://ftp.example.com/db2. If this is done, it is expected that all
+# resources needed for setup will be available at the provided location. See 
+# https://github.com/chscott/ConnectionsDocker/tree/master/db2 for a list of resources.
+curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh" || { printf "F: Download of ${SETUP_URL}/utils.sh failed"; exit 1; }
+
+# Source common utilities
 . "${WORK_DIR}/utils.sh"
 
 # Exit if DB2 has already been installed
@@ -15,8 +21,19 @@ fi
 
 inform "Beginning installation of DB2 server..."
 
-# Extract the product install files
-inform "Extracting product install files..."
+# Download the install packages
+if [[ -z "${DB2_INSTALL_URL}" || -z "${DB2_LICENSE_URL}" ]]; then
+    fail "The DB2_INSTALL_URL and DB2_LICENSE_URL environment variables must be specified when running the container"
+    exit 1
+else
+    inform "Downloading ${DB2_INSTALL_URL}..."
+    curl -L -O -J -s -S -f "${DB2_INSTALL_URL}" || { printf "F: Download of ${DB2_INSTALL_URL} failed"; exit 1; }
+    inform "Downloading ${DB2_LICENSE_URL}..."
+    curl -L -O -J -s -S -f "${DB2_LICENSE_URL}" || { printf "F: Download of ${DB2_LICENSE_URL} failed"; exit 1; }
+fi
+
+# Extract the install files
+inform "Extracting install files..."
 tar -xzf "${DB2_INSTALL_PACKAGE}"
 unzip -qq "${DB2_LICENSE_PACKAGE}"
 
@@ -46,5 +63,8 @@ grep "DBI1335I" "db2val.log" >/dev/null || { fail "DB2 validation failed"; exit 
 # Apply the DB2 license
 inform "Applying DB2 license..."
 "/app/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; exit 1; }
+
+# Create users and groups
+createUsersAndGroups
 
 inform "Completed installation of DB2 server..."

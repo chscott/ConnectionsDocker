@@ -24,7 +24,7 @@ WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # the container. For example, SETUP_URL=ftp://ftp.example.com/db2. If this is done, it is expected that all
 # resources needed for setup will be available at the provided location. See 
 # https://github.com/chscott/ConnectionsDocker/tree/master/db2 for a list of resources.
-curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh"
+curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh" || { printf "F: Download of ${SETUP_URL}/utils.sh failed"; exit 1; }
 
 # Source common utilities
 . "${WORK_DIR}/utils.sh"
