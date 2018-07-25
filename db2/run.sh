@@ -64,3 +64,5 @@ elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
 fi 
 
 inform "Completed DB2 run script"
+
+ps -ef
