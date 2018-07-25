@@ -165,8 +165,6 @@ function createDatabase() {
         fi
     fi
     
-    inform "Completed creating ${dbName}"
-
 }
 
 # Create the Connections databases
