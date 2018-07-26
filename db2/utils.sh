@@ -86,13 +86,13 @@ function createUsersAndGroups() {
 
     # Add required users
     inform "Creating DB2 users..."
-    useradd -r -m -d "/data/db2inst1" -g "db2iadm1" "db2inst1" 2>/dev/null || checkUserGroupStatus "${?}" "db2inst1" || return 1
+    useradd -r -m -d "${DATA_DIR}/db2inst1" -g "db2iadm1" "db2inst1" 2>/dev/null || checkUserGroupStatus "${?}" "db2inst1" || return 1
     printf "db2inst1:password" | chpasswd
-    useradd -r -m -d "/data/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fenc1" || return 1
+    useradd -r -m -d "${DATA_DIR}/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fenc1" || return 1
     printf "db2fenc1:password" | chpasswd
-    useradd -r -m -d "/data/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1" || return 1
+    useradd -r -m -d "${DATA_DIR}/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1" || return 1
     printf "dasusr1:password" | chpasswd
-    useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" || return 1
+    useradd -r -m -d "${DATA_DIR}/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" || return 1
     printf "lcuser:password" | chpasswd
     
 }
@@ -110,22 +110,24 @@ function updateLimitsFile() {
 
 # Create the DB2 instance
 function createDB2Instance() {
+
+    local LOG_DIR="${INSTANCE_DIR}/create_instance.log"
     
     # Create the instance if it doesn't already exist
-    if [[ ! -d "/data/db2inst1/sqllib" ]]; then
+    if [[ ! -d "${INSTANCE_DIR}/sqllib" ]]; then
         inform "Creating DB2 instance..."
-        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >|/data/db2inst1/createInstance.log 2>&1 || { fail "DB2 instance creation failed"; return 1; }
+        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >|"${LOG_DIR}" 2>&1 || { fail "DB2 instance creation failed"; return 1; }
     else
         inform "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping"
     fi
 
 }
 
-# Update /data/db2inst1/sqllib/db2nodes.cfg
+# Update ${INSTANCE_DIR}/sqllib/db2nodes.cfg
 function updateDB2NodesFile() {
 
     inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
-    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || { fail "Unable to update db2nodes.cfg"; return 1; }
+    printf "0 %s\n" "$(hostname)" >|"${INSTANCE_DIR}/sqllib/db2nodes.cfg" || { fail "Unable to update db2nodes.cfg"; return 1; }
 
 }
 
@@ -144,11 +146,11 @@ function updateDB2Registry() {
 
     # Global registry variable must be set as root
     inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
-    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || { fail "Unable to update the DB2SYSTEM registry variable"; return 1; }
+    "${INSTANCE_DIR}/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || { fail "Unable to update the DB2SYSTEM registry variable"; return 1; }
     
     # Non-global registry variable set as instance owner
     inform "Enabling Unicode codepage..."
-    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" || { fail "Unable to set DB2 codepage"; return 1; }
+    su - "db2inst1" -c "${INSTANCE_DIR}/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" || { fail "Unable to set DB2 codepage"; return 1; }
 
 }
 
@@ -188,6 +190,7 @@ function createDatabase() {
     local dbName="${1}"
     local dbDir="${2}"
     local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
+    local LOG_DIR="${INSTANCE_DIR}/init_dbs.log"
     
     inform "Creating ${dbName} database..."
     
@@ -195,24 +198,24 @@ function createDatabase() {
     if [[ "${count}" > 0 ]]; then
         warn "${dbName} database is already created. Skipping"
     else
-        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >|/data/db2inst1/initDbs.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/createDb.sql\" >|\"${LOG_DIR}\" 2>&1"
         checkStatusDb "${?}" "Unable to create database: ${dbName}" || return 1
-        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/appGrants.sql\" >>\"${LOG_DIR}\" 2>&1"
         checkStatusDb "${?}" "Unable to grant rights on database: ${dbName}" || return 1
         # Special handling for HOMEPAGE
         if [[ "${dbName}" == "HOMEPAGE" ]]; then
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/initData.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to initialize data for database: ${dbName}" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/reorg.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to run reorg on database: ${dbName}" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/updateStats.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to update stats for database: ${dbName}" || return 1
         fi
         # Special handling for SNCOMM
         if [[ "${dbName}" == "SNCOMM" ]]; then
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-createDb.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to create table: Calendar" || return 1
-            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >>/data/db2inst1/initDbs.log 2>&1"
+            su - "db2inst1" -c "db2 -td@ -sf \"${DB_SCRIPT_DIR}/${dbDir}/db2/calendar-appGrants.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to grant rights on table: Calendar" || return 1
         fi
     fi
@@ -326,9 +329,10 @@ function applyCR1Updates() {
 
     local CR1_UPDATE_PACKAGE="$(echo "${CR1_UPDATE_URL}" | awk -F "/" '{print $NF}')"
     local CR1_UPDATE_DIR="${WORK_DIR}/60cr1-database-updates_20171128-1036/From-60"
+    local LOG_DIR="${INSTANCE_DIR}/cr1_updates.log"
     
     # See if CR1 was already applied. If so, do nothing
-    if [[ -f "/data/db2inst1/sqllib/log/cr1_complete" ]]; then
+    if [[ -f "${INSTANCE_DIR}/sqllib/log/cr1_complete" ]]; then
         warn "CR1 update was requested, but it was previously applied. Skipping"
         return 0
     fi
@@ -349,9 +353,9 @@ function applyCR1Updates() {
     su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
 
     # Apply the updates
-    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|/data/db2inst1/cr1_updates.log 2>&1"
+    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|\"${LOG_DIR}\" 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Activities" || return 1
-    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr1_updates.log 2>&1"
+    su - "db2inst1" -c "db2 -td@ -vf \"${CR1_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
         checkStatusDb "${?}" "Unable to apply CR1 updates to Homepage" || return 1
         
     # Stop the DB2 instance
@@ -359,7 +363,7 @@ function applyCR1Updates() {
     su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
     
     # Leave a marker in the container to indicate CR1 updates are complete
-    touch "/data/db2inst1/sqllib/log/cr1_complete"
+    touch "${INSTANCE_DIR}/sqllib/log/cr1_complete"
     
     inform "Completed CR1 database updates"
 
@@ -369,9 +373,10 @@ function applyCR1Updates() {
 function applyCR2Updates() {
 
     local CR2_UPDATE_PACKAGE="$(echo "${CR2_UPDATE_URL}" | awk -F "/" '{print $NF}')"
+    local LOG_DIR="${INSTANCE_DIR}/cr2_updates.log"
     
     # See if CR2 was already applied. If so, do nothing
-    if [[ -f "/data/db2inst1/sqllib/log/cr2_complete" ]]; then
+    if [[ -f "${INSTANCE_DIR}/sqllib/log/cr2_complete" ]]; then
         warn "CR2 update was requested, but it was previously applied. Skipping"
         return 0
     fi
@@ -392,45 +397,45 @@ function applyCR2Updates() {
     su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
     
     # See if CR1 was already applied. If so, the updates need to be from CR1. If not, they are from the base release
-    if [[ -f "/data/db2inst1/sqllib/log/cr1_complete" ]]; then 
+    if [[ -f "${INSTANCE_DIR}/sqllib/log/cr1_complete" ]]; then 
         inform "CR1 was previously applied. Will apply CR1 to CR2 updates"
         local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60CR1-60IFR1"
         # Apply the updates
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
     else
         inform "CR1 was not previously applied. Will apply Base to CR2 updates"
         local CR2_UPDATE_DIR="${WORK_DIR}/60cr2-database-updates/From-60"
         # Apply the updates
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-activities-db2.sql\" >|\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Activities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR1-homepage-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-communities-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Communities" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-files_appGrants-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Files" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-homepage-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Homepage" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-metrics-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Metrics" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
-        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>/data/db2inst1/cr2_updates.log 2>&1"
+        su - "db2inst1" -c "db2 -td@ -vf \"${CR2_UPDATE_DIR}/db2/60-CR2-wikis_appGrants-db2.sql\" >>\"${LOG_DIR}\" 2>&1"
             checkStatusDb "${?}" "Unable to apply CR2 updates to Wikis" || return 1
     fi
         
@@ -439,7 +444,7 @@ function applyCR2Updates() {
     su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
     
     # Leave a marker in the container to indicate CR2 updates are complete
-    touch "/data/db2inst1/sqllib/log/cr2_complete"
+    touch "${INSTANCE_DIR}/sqllib/log/cr2_complete"
     
     inform "Completed CR2 database updates"
 

@@ -19,6 +19,8 @@
 # DB2 instance will be started and available for use.
 
 WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DATA_DIR="/data"
+INSTANCE_DIR="${DATA_DIR}/db2inst1"
 
 # Download common utilities. SETUP_URL can be overridden by setting it as an environment variable when running
 # the container. For example, SETUP_URL=ftp://ftp.example.com/db2. If this is done, it is expected that all
