@@ -22,13 +22,12 @@ WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATA_DIR="/data"
 INSTANCE_DIR="${DATA_DIR}/db2inst1"
 
-# Download common utilities. SETUP_URL can be overridden by setting it as an environment variable when running
-# the container. For example, SETUP_URL=ftp://ftp.example.com/db2. If this is done, it is expected that all
-# resources needed for setup will be available at the provided location. See 
-# https://github.com/chscott/ConnectionsDocker/tree/master/db2 for a list of resources.
-curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh" || { printf "F: Download of ${SETUP_URL}/utils.sh failed"; exit 1; }
+# Download DB2 functions and common utilities. SETUP_URL can be overridden by setting it as an environment variable
+curl -L -O -J -s -S -f "${SETUP_URL}/db2/functions.sh" || { printf "F: Download of ${SETUP_URL}/db2/functions.sh failed"; exit 1; }
+curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download of ${SETUP_URL}/common/utils.sh failed"; exit 1; }
 
-# Source common utilities
+# Source DB2 functions and common utilities
+. "${WORK_DIR}/functions.sh"
 . "${WORK_DIR}/utils.sh"
 
 inform "Starting DB2 run script..."
