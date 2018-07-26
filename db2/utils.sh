@@ -5,7 +5,6 @@ SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db
 function waitForSignals() {
 
     inform "Waiting for signals from Docker engine..."
-
     while true; do
         sleep 1
     done
@@ -57,7 +56,7 @@ function fail() {
 
 }
 
-# Check status after adding/deleting user or group
+# Check status after adding/deleting user or group (some errors are not real errors)
 function checkUserGroupStatus() {
 
     local code="${1}"
@@ -81,34 +80,75 @@ function createUsersAndGroups() {
 
     # Add required groups
     inform "Creating DB2 groups..."
-    groupadd -r "db2iadm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2iadm1"
-    groupadd -r "db2fsdm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fsdm1"
-    groupadd -r "dasadm1" 2>/dev/null || checkUserGroupStatus "${?}" "dasadm1"
+    groupadd -r "db2iadm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2iadm1" || return 1
+    groupadd -r "db2fsdm1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fsdm1" || return 1
+    groupadd -r "dasadm1" 2>/dev/null ||  checkUserGroupStatus "${?}" "dasadm1" || return 1
 
     # Add required users
     inform "Creating DB2 users..."
-    useradd -r -m -d "/data/db2inst1" -g "db2iadm1" "db2inst1" 2>/dev/null || checkUserGroupStatus "${?}" "db2inst1"
+    useradd -r -m -d "/data/db2inst1" -g "db2iadm1" "db2inst1" 2>/dev/null || checkUserGroupStatus "${?}" "db2inst1" || return 1
     printf "db2inst1:password" | chpasswd
-    useradd -r -m -d "/data/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fenc1"
+    useradd -r -m -d "/data/db2fenc1" -g "db2fsdm1" "db2fenc1" 2>/dev/null || checkUserGroupStatus "${?}" "db2fenc1" || return 1
     printf "db2fenc1:password" | chpasswd
-    useradd -r -m -d "/data/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1"
+    useradd -r -m -d "/data/dasusr1" -g "dasadm1" "dasusr1" 2>/dev/null || checkUserGroupStatus "${?}" "dasusr1" || return 1
     printf "dasusr1:password" | chpasswd
-    useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" 
+    useradd -r -m -d "/data/lcuser" -g "db2iadm1" "lcuser" 2>/dev/null || checkUserGroupStatus "${?}" "lcuser" || return 1
     printf "lcuser:password" | chpasswd
     
 }
 
+# Update /etc/security/limits.conf
+function updateLimitsFile() {
+
+    inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
+    if [[ $(grep -c "@db2iadm1" "/etc/security/limits.conf") == 0 ]]; then
+        printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"
+        printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"  
+    fi
+
+}
+
 # Create the DB2 instance
-function createInstance() {
+function createDB2Instance() {
     
     # Create the instance if it doesn't already exist
     if [[ ! -d "/data/db2inst1/sqllib" ]]; then
-        inform "Beginning creation of DB2 instance..."
-        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >/dev/null || { fail "DB2 instance creation failed"; return 1; }
-        inform "Completed creation of DB2 instance"
+        inform "Creating DB2 instance..."
+        "/app/instance/db2icrt" -u "db2fenc1" "db2inst1" >|/data/db2inst1/createInstance.log 2>&1 || { fail "DB2 instance creation failed"; return 1; }
     else
-        inform "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping creation"
+        inform "DB2 instance already exists at /app/db2inst1/db2inst1. Skipping"
     fi
+
+}
+
+# Update /data/db2inst1/sqllib/db2nodes.cfg
+function updateDB2NodesFile() {
+
+    inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
+    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || { fail "Unable to update db2nodes.cfg"; return 1; }
+
+}
+
+# Update /etc/services
+function updateServicesFile() {
+
+    inform "Adding DB2 instance to /etc/services file..."
+    if [[ $(grep "db2inst1" "/etc/services" | grep -c 50000) == 0 ]]; then 
+        printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services"
+    fi
+
+}
+
+# Update DB2 registry
+function updateDB2Registry() {
+
+    # Global registry variable must be set as root
+    inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
+    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || { fail "Unable to update the DB2SYSTEM registry variable"; return 1; }
+    
+    # Non-global registry variable set as instance owner
+    inform "Enabling Unicode codepage..."
+    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" || { fail "Unable to set DB2 codepage"; return 1; }
 
 }
 
@@ -147,6 +187,7 @@ function createDatabase() {
 
     local dbName="${1}"
     local dbDir="${2}"
+    local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
     
     inform "Creating ${dbName} database..."
     
@@ -181,7 +222,6 @@ function createDatabase() {
 # Create the Connections databases
 function createDatabases() {
 
-    local DB_SCRIPT_DIR="${WORK_DIR}/Wizards/connections.sql"
     local IC_DBWIZARD_PACKAGE="$(echo "${DB_WIZARDS_URL}" | awk -F "/" '{print $NF}')"
     
     # If all databases are already created, just return
@@ -251,47 +291,28 @@ function init() {
     createUsersAndGroups || return 1
     
     # Increase open file limit for instance owner group
-    inform "Setting open file limits for db2iadm1 in /etc/security/limits.conf..."
-    if [[ $(grep -c "@db2iadm1" "/etc/security/limits.conf") > 0 ]]; then
-        warn "Entry already exists in /etc/security/limits.conf for @db2iadm. Manual review recommended"
-    else
-        printf "@db2iadm1\tsoft\tnofile\t16384\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"
-        printf "@db2iadm1\thard\tnofile\t65536\n" >> "/etc/security/limits.conf" || warn "Unable to update /etc/security/limits.conf"
-    fi
+    updateLimitsFile || return 1
 
     # Create the DB2 instance
-    createInstance || return 1
+    createDB2Instance || return 1
     
     # Create a new db2nodes.cfg file (needed because the image ID is there currently and will cause SQL6031N)
-    inform "Generating a new db2nodes.cfg file with hostname $(hostname)..."
-    printf "0 %s\n" "$(hostname)" >|"/data/db2inst1/sqllib/db2nodes.cfg" || warn "Unable to update db2nodes.cfg"
+    updateDB2NodesFile || return 1
 
     # Update the /etc/services file to include the port mapping for the instance (also to prevent SQL6031N)
-    inform "Adding DB2 instance to /etc/services file..."
-    if [[ $(grep "db2inst1" "/etc/services" | grep -c 50000) > 0 ]]; then 
-        inform "Entry already exists in /etc/services for DB2_db2inst1. Skipping"
-    else
-        printf "%s\t%s\t\t%s\n" "DB2_db2inst1" "50000/tcp" "# DB2 instance" >>"/etc/services" || warn "Unable to update /etc/services"
-    fi
+    updateServicesFile || return 1
 
-    # Start the DB2 instance
-    inform "Starting DB2 instance..."
-    su - "db2inst1" -c "db2start >/dev/null" || { fail "Unable to start DB2 instance. Exiting"; return 1; }
+    # Start the DB2 instance (must be started to update the registry in the next step)
+    startDB2 || return 1
     
     # Update the DB2SYSTEM registry variable (has to occur here, after starting DB2, and must run as root)
-    inform "Updating the DB2SYSTEM registry variable with hostname $(hostname)..."
-    "/data/db2inst1/sqllib/adm/db2set" -g "DB2SYSTEM=$(hostname)" || warn "Unable to update the DB2SYSTEM registry variable"
-
-    # Enable Unicode
-    inform "Enabling Unicode codepage..."
-    su - "db2inst1" -c "/data/db2inst1/sqllib/adm/db2set DB2CODEPAGE=1208 >/dev/null" || warn "Unable to set DB2 codepage"
+    updateDB2Registry || return 1    
 
     # Create the Connections databases
     createDatabases || return 1
     
-    # Stop the DB2 instance
-    inform "Stopping DB2 instance..."
-    su - "db2inst1" -c "db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; }
+    # Stop the DB2 instance (stopping here to provide consistent behavior for all run.sh cases)
+    stopDB2 || return 1
 
     # Leave a marker in the container to indicate init is complete
     touch "${WORK_DIR}/init_complete"
