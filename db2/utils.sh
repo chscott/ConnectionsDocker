@@ -1,6 +1,15 @@
 # Default setup URL. Can be overridden by environment variable when starting container
 SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2"
 
+# Function to put script in a loop, waiting for shutdown signal from Docker
+function waitForSignals() {
+
+    while true; do
+        sleep 60
+    done
+    
+}
+
 # Print a log message with severity
 function log() {
 
