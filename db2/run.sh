@@ -33,6 +33,7 @@ inform "Starting DB2 run script..."
 
 # Set up traps to listen for container stop signals
 trap 'inform "SIGTERM received. Stopping DB2..."; stopDB2; exit' SIGTERM
+trap 'inform "SIGINT received. Stopping DB2..."; stopDB2; exit' SIGINT
 trap 'inform "SIGHUP received. Restarting DB2..."; stopDB2; startDB2' SIGHUP
 
 # Order matters here. Each CR should be added before the prior one.
