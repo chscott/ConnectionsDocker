@@ -67,7 +67,7 @@ elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
 
+inform "Completed DB2 run script"
+
 # Wait for signals (shutdown)
 waitForSignals
-
-inform "Completed DB2 run script"
