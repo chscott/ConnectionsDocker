@@ -5,7 +5,7 @@ SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db
 function waitForSignals() {
 
     while true; do
-        wait "${1}"
+        wait "${!}"
     done
     
 }
