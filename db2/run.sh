@@ -32,8 +32,8 @@ curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh" || { printf "F: Download of ${SET
 inform "Starting DB2 run script..."
 
 # Set up traps to listen for container stop signals
-trap 'inform "SIGTERM received. Stopping DB...2"; stopDB2' SIGTERM
-trap 'inform "SIGKILL received. Stopping DB2..."; stopDB2' SIGKILL
+trap 'inform "SIGTERM received. Stopping DB2..."; stopDB2; exit' SIGTERM
+trap 'inform "SIGKILL received. Stopping DB2..."; stopDB2; exit' SIGKILL
 
 # Order matters here. Each CR should be added before the prior one.
 # For example, specifing CR2 means that CR1 is ignored, if specified.
