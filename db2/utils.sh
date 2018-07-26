@@ -5,7 +5,7 @@ SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db
 function waitForSignals() {
 
     while true; do
-        sleep 60
+        wait "${1}"
     done
     
 }
@@ -236,6 +236,7 @@ function stopDB2() {
 
     inform "Stopping DB2 instance..."
     su - "db2inst1" -c "exec db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; } 
+    inform "DB2 has stopped successfully"
 
 }
 
