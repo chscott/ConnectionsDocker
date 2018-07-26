@@ -4,6 +4,8 @@ SETUP_URL="https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db
 # Function to put script in a loop, waiting for shutdown signal from Docker
 function waitForSignals() {
 
+    inform "Waiting for signals from Docker engine..."
+
     while true; do
         sleep 1
     done

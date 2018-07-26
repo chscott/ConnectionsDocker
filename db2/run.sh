@@ -32,8 +32,8 @@ curl -L -O -J -s -S -f "${SETUP_URL}/utils.sh" || { printf "F: Download of ${SET
 inform "Starting DB2 run script..."
 
 # Set up traps to listen for container stop signals
-trap "echo Received SIGTERM signal; stopDB2" SIGTERM
-trap "echo Received SIGKILL signal; stopDB2" SIGKILL
+trap 'inform "SIGTERM received. Stopping DB...2"; stopDB2' SIGTERM
+trap 'inform "SIGKILL received. Stopping DB2..."; stopDB2' SIGKILL
 
 # Order matters here. Each CR should be added before the prior one.
 # For example, specifing CR2 means that CR1 is ignored, if specified.
@@ -67,7 +67,7 @@ elif [[ ! -f "${WORK_DIR}/init_complete" ]]; then
     startDB2 || { fail "Unable to start DB2. Exiting"; exit 1; }
 fi 
 
-inform "Completed DB2 run script"
-
 # Wait for signals (shutdown)
 waitForSignals
+
+inform "Completed DB2 run script"
