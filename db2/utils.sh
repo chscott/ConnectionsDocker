@@ -221,6 +221,14 @@ function startDB2() {
 
 }
 
+# Stop DB2
+function stopDB2() {
+
+    inform "Stopping DB2 instance..."
+    su - "db2inst1" -c "exec db2stop >/dev/null" || { fail "Unable to stop DB2 instance. Exiting"; return 1; } 
+
+}
+
 # Initialize DB2 for Connections
 function init() {
 
