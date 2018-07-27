@@ -148,7 +148,7 @@ function createDatabase() {
 # Create the Connections databases
 function createDatabases() {
 
-    local IC_DBWIZARD_PACKAGE="$(echo "${DB_WIZARDS_URL}" | awk -F "/" '{print $NF}')"
+    local DB_WIZARDS_PACKAGE="$(echo "${DB_WIZARDS_URL}" | awk -F "/" '{print $NF}')"
     
     # If all databases are already created, just return
     inform "Checking to see if databases need to be created..."
@@ -167,8 +167,8 @@ function createDatabases() {
 
     # Unpack the database creation scripts
     inform "Unpacking database creation scripts..."
-    tar -xf "${IC_DBWIZARD_PACKAGE}"
-    chown -R "db2inst1.db2iadm1" "${IC_DBWIZARD_PACKAGE}"
+    tar -xf "${DB_WIZARDS_PACKAGE}"
+    chown -R "db2inst1.db2iadm1" "${DB_WIZARDS_PACKAGE}"
     
     # Create the databases
     createDatabase "HOMEPAGE" "homepage" || return 1

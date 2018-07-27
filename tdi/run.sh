@@ -20,8 +20,8 @@ inform "Starting TDI run script..."
 trap 'inform "SIGTERM received. Stopping..."; exit' SIGTERM
 trap 'inform "SIGINT received. Stopping..."; exit' SIGINT
 
-inform "Run tasks: 1) Copy solution directory, 2) Configure solution directory"
-copySolutionDir
+inform "Run tasks: 1) Create solution directory, 2) Configure solution directory"
+createSolutionDir
 configSolutionDir
 
 # Wait for signals (shutdown)
