@@ -5,7 +5,7 @@ function createSolutionDir() {
     
     # If the solution directory already exists, just return
     inform "Checking to see if TDI solution directory needs to be created..."
-    if [[ -d "${DATA_DIR}/tdisol" ]]; then
+    if [[ -n "$(ls -A "${DATA_DIR}")" ]]; then
         inform "Solution directory already exists" && return 0
     fi
     
@@ -22,12 +22,12 @@ function createSolutionDir() {
 
     # Unpack the solution package
     inform "Unpacking solution directory..."
-    tar -xf "${TDISOL_PACKAGE}" --directory "${DATA_DIR}/tdisol" --strip-components=1
-    chmod -R u+x "${DATA_DIR}/tdisol/*.sh"
-    chmod u+x "${DATA_DIR}/tdisol/netstore"
+    tar -xf "${TDISOL_PACKAGE}" --directory "${DATA_DIR}" --strip-components=1
+    chmod -R u+x "${DATA_DIR}/*.sh"
+    chmod u+x "${DATA_DIR}/netstore"
     
     # Update tdienv.sh with the correct path
-    sed -i "s|\(TDIPATH=\).*|\1\"${DATA_DIR}\"|" "${DATA_DIR}/tdisol/tdienv.sh" || { fail "Unable to update tdienv.sh"; return 1; }
+    sed -i "s|\(TDIPATH=\).*|\1\"${DATA_DIR}\"|" "${DATA_DIR}/tdienv.sh" || { fail "Unable to update tdienv.sh"; return 1; }
 
 }
 
