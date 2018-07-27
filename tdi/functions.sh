@@ -36,8 +36,8 @@ function configSolutionDir() {
 
     # Update profiles_tdi.properties if the environment values were provided
     if [[ -z "${LDAP_HOST}" || -z "${LDAP_PORT}" || -z "${LDAP_BIND_DN}" || -z "${LDAP_BIND_PWD}" ||
-          -z "${LDAP_SEARCH_BASE}" || -z "${LDAP_SEARCH_FILTER}" || -z "${DB2_SERVER_FQDN}" ||
-          -z "${DB2_INSTANCE_USER}" || -z "${DB2_INSTANCE_PWD}" ]]
+          -z "${LDAP_SEARCH_BASE}" || -z "${LDAP_SEARCH_FILTER}" || -z "${DB2_HOST}" ||
+          -z "${DB2_PORT}" || -z "${DB2_INSTANCE_USER}" || -z "${DB2_INSTANCE_PWD}" ]]
     then
         warn "TDI configuration properties were not provided. Manual configuration of profiles_tdi.properties is required"
     else
@@ -47,7 +47,7 @@ function configSolutionDir() {
         sed -i "s|\(source_ldap_user_password=\).*|\1\"${LDAP_BIND_PWD}\"|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|\(source_ldap_search_base=\).*|\1\"${LDAP_SEARCH_BASE}\"|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|\(source_ldap_search_filter=\).*|\1\"${LDAP_SEARCH_FILTER}\"|" "${DATA_DIR}/profiles_tdi.properties"
-        sed -i "s|\(dbrepos_jdbc_url=\).*|\1jdbc:db2://\"${DB2_SERVER_FQDN}:50000/peopledb\"|" "${DATA_DIR}/profiles_tdi.properties"
+        sed -i "s|\(dbrepos_jdbc_url=\).*|\1jdbc:db2://\"${DB2_HOST}:${DB2_PORT}/peopledb\"|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|\(dbrepos_username=\).*|\1\"${DB2_INSTANCE_USER}\"|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|\(dbrepos_password=\).*|\1\"${DB2_INSTANCE_PWD}\"|" "${DATA_DIR}/profiles_tdi.properties"
     fi 
