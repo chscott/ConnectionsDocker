@@ -21,8 +21,8 @@ trap 'inform "SIGTERM received. Stopping..."; exit' SIGTERM
 trap 'inform "SIGINT received. Stopping..."; exit' SIGINT
 
 inform "Run tasks: 1) Create solution directory, 2) Configure solution directory"
-createSolutionDir
-configSolutionDir
+createSolutionDir || exit 1
+configSolutionDir || exit 1
 
 # Wait for signals (shutdown)
 waitForSignals
