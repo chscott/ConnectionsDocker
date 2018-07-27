@@ -23,7 +23,7 @@ function createSolutionDir() {
     # Unpack the solution package
     inform "Unpacking solution directory..."
     tar -xf "${TDISOL_PACKAGE}" --directory "${DATA_DIR}" --strip-components=1
-    chmod -R u+x "${DATA_DIR}/*.sh"
+    chmod -R u+x "${DATA_DIR}"/*.sh
     chmod u+x "${DATA_DIR}/netstore"
     
     # Update tdienv.sh with the correct path
