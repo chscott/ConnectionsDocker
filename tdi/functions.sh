@@ -58,23 +58,20 @@ function configSolutionDir() {
     else
         inform "Updating map_dbrepos_from_source.properties..."
         if [[ "${LDAP_TYPE}" == "AD" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_source.properties" "${SETUP_URL}/rsp/map_dbrepos_from_ad.properties" || downloadFailed=true
+            curl -L -J -s -S -f "${SETUP_URL}/rsp/map_dbrepos_from_ad.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DOMINO" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_source.properties" "${SETUP_URL}/rsp/map_dbrepos_from_domino.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_domino.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "SDS" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_source.properties" "${SETUP_URL}/rsp/map_dbrepos_from_sds.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_sds.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DSEE" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_source.properties" "${SETUP_URL}/rsp/map_dbrepos_from_dsee.properties"  || downloadFailed=true
+            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_dsee.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
         else
             warn "Invalid LDAP type ${LDAP_TYPE} provided. Manual configuration of map_dbrepos_from_source.properties is required"
         fi
         if [[ "${downloadFailed}" == "true" ]]; then
             warn "Download of ${SETUP_URL}/rsp/map_dbrepos_from_ad.properties failed. Manual configuration of map_dbrepos_from_source.properties is required"
-            return 0
         fi
 
     fi
     
-    cp -f "${WORK_DIR}/map_dbrepos_from_source.properties" "${DATA_DIR}/map_dbrepos_from_source.properties"
-
 }
