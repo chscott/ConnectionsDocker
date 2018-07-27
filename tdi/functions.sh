@@ -58,13 +58,13 @@ function configSolutionDir() {
     else
         inform "Updating map_dbrepos_from_source.properties..."
         if [[ "${LDAP_TYPE}" == "AD" ]]; then
-            curl -L -J -s -S -f "${SETUP_URL}/tdi/map_dbrepos_from_ad.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f "${SETUP_URL}/tdi/map_dbrepos_from_ad.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DOMINO" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}//tdi/map_dbrepos_from_domino.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}//tdi/map_dbrepos_from_domino.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "SDS" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_sds.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_sds.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DSEE" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_dsee.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_dsee.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
         else
             warn "Invalid LDAP type ${LDAP_TYPE} provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
         fi
