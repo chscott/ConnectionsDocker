@@ -39,7 +39,7 @@ function configSolutionDir() {
           -z "${LDAP_SEARCH_BASE}" || -z "${LDAP_SEARCH_FILTER}" || -z "${DB2_HOST}" ||
           -z "${DB2_PORT}" || -z "${DB2_INSTANCE_USER}" || -z "${DB2_INSTANCE_PWD}" ]]
     then
-        warn "TDI configuration properties were not provided. Manual configuration of profiles_tdi.properties is required"
+        warn "TDI configuration properties were not provided. Manual configuration of ${DATA_DIR}/profiles_tdi.properties is required"
     else
         inform "Updating profiles_tdi.properties..."
         sed -i "s|\(source_ldap_url=\).*|\1ldap:\/\/${LDAP_HOST}:${LDAP_PORT}|" "${DATA_DIR}/profiles_tdi.properties"
@@ -54,22 +54,22 @@ function configSolutionDir() {
 
     # Replace map_dbrepos_from_source.properties with one preconfigured for the requested LDAP, if provided
     if [[ -z "${LDAP_TYPE}" ]]; then
-        warn "TDI configuration properties were not provided. Manual configuration of map_dbrepos_from_source.properties is required"
+        warn "TDI configuration properties were not provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
     else
         inform "Updating map_dbrepos_from_source.properties..."
         if [[ "${LDAP_TYPE}" == "AD" ]]; then
-            curl -L -J -s -S -f "${SETUP_URL}/rsp/map_dbrepos_from_ad.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f "${SETUP_URL}/tdi/map_dbrepos_from_ad.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DOMINO" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_domino.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}//tdi/map_dbrepos_from_domino.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "SDS" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_sds.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_sds.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
         elif [[ "${LDAP_TYPE}" == "DSEE" ]]; then
-            curl -L -J -s -S -f -o "${WORK_DIR}/map_dbrepos_from_dsee.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
+            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_dsee.properties" >|"${WORK_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
         else
-            warn "Invalid LDAP type ${LDAP_TYPE} provided. Manual configuration of map_dbrepos_from_source.properties is required"
+            warn "Invalid LDAP type ${LDAP_TYPE} provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
         fi
         if [[ "${downloadFailed}" == "true" ]]; then
-            warn "Download of ${SETUP_URL}/rsp/map_dbrepos_from_ad.properties failed. Manual configuration of map_dbrepos_from_source.properties is required"
+            warn "Download of map_dbrepos_from_source.properties failed. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
         fi
 
     fi
