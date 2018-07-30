@@ -76,3 +76,18 @@ function configSolutionDir() {
     fi
     
 }
+
+# Populate users from LDAP
+function populateUsers() {
+
+    "${DATA_DIR}/collect_dns.sh"
+    "${DATA_DIR}/populate_from_dn_file.sh"
+
+}
+
+# Synchronize users with LDAP
+function synchronizeUsers() {
+
+    "${DATA_DIR}/sync_all_dns.sh"
+
+}
