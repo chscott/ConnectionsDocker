@@ -1,5 +1,8 @@
 function installDB2() {
 
+    local DB2_INSTALL_PACKAGE="$(echo "${DB2_INSTALL_URL}" | awk -F "/" '{print $NF}')"
+    local DB2_LICENSE_PACKAGE="$(echo "${DB2_LICENSE_URL}" | awk -F "/" '{print $NF}')"
+
     inform "Beginning DB2 install..."
 
     # Download the install packages
