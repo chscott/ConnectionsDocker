@@ -15,19 +15,17 @@ curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download o
 . "${WORK_DIR}/functions.sh"
 . "${WORK_DIR}/utils.sh"
 
-inform "Starting TDI run script..."
-
 # Set up traps to listen for container stop signals
 trap 'inform "SIGTERM received. Stopping..."; exit' SIGTERM
 trap 'inform "SIGINT received. Stopping..."; exit' SIGINT
 trap 'inform "SIGUSR1 received. Populating users..."; populateUsers' SIGUSR1
 trap 'inform "SIGUSR2 received. Synchronizing users..."; synchronizeUsers' SIGUSR2
 
+inform "Starting TDI run script..."
 inform "Run tasks: 1) Create solution directory, 2) Configure solution directory"
+
 createSolutionDir || exit 1
 configSolutionDir || exit 1
-
-# Wait for signals (shutdown)
 waitForSignals
 
 inform "Completed TDI run script"
