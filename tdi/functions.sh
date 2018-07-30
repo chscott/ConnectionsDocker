@@ -54,22 +54,23 @@ function configSolutionDir() {
 
     # Replace map_dbrepos_from_source.properties with one preconfigured for the requested LDAP, if provided
     if [[ -z "${LDAP_TYPE}" ]]; then
-        warn "TDI configuration properties were not provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
+        warn "LDAP type was not provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
     else
         inform "Updating map_dbrepos_from_source.properties..."
         if [[ "${LDAP_TYPE}" == "AD" ]]; then
-            curl -L -J -s -S -f "${SETUP_URL}/tdi/map_dbrepos_from_ad.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            sed -i "s|^\(guid=\).*|\1\{function_map_from_objectGUID\}|" "${DATA_DIR}/map_dbrepos_from_source.properties"
+            sed -i "s|^\(uid=\).*|\1sAMAccountName|" "${DATA_DIR}/map_dbrepos_from_source.properties"
         elif [[ "${LDAP_TYPE}" == "DOMINO" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}//tdi/map_dbrepos_from_domino.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            sed -i "s|^\(guid=\).*|\1\{function_map_from_dominoUNID\}|" "${DATA_DIR}/map_dbrepos_from_source.properties"
+            sed -i "s|^\(uid=\).*|\1uid|" "${DATA_DIR}/map_dbrepos_from_source.properties"
         elif [[ "${LDAP_TYPE}" == "SDS" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_sds.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties" || downloadFailed=true
+            sed -i "s|^\(guid=\).*|\1nsUniqueId|" "${DATA_DIR}/map_dbrepos_from_source.properties"
+            sed -i "s|^\(uid=\).*|\1uid|" "${DATA_DIR}/map_dbrepos_from_source.properties"
         elif [[ "${LDAP_TYPE}" == "DSEE" ]]; then
-            curl -L -J -s -S -f -o "${SETUP_URL}/tdi/map_dbrepos_from_dsee.properties" >|"${DATA_DIR}/map_dbrepos_from_source.properties"  || downloadFailed=true
+            sed -i "s|^\(guid=\).*|\1ibm-entryUuid|" "${DATA_DIR}/map_dbrepos_from_source.properties"
+            sed -i "s|^\(uid=\).*|\1uid|" "${DATA_DIR}/map_dbrepos_from_source.properties"
         else
-            warn "Invalid LDAP type ${LDAP_TYPE} provided. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
-        fi
-        if [[ "${downloadFailed}" == "true" ]]; then
-            warn "Download of map_dbrepos_from_source.properties failed. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
+            warn "Auto-configuration of ${LDAP_TYPE} not supported. Manual configuration of ${DATA_DIR}/map_dbrepos_from_source.properties is required"
         fi
 
     fi
