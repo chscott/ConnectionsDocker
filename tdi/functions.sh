@@ -80,14 +80,35 @@ function configSolutionDir() {
 # Populate users from LDAP
 function populateUsers() {
 
-    "${DATA_DIR}/collect_dns.sh"
-    "${DATA_DIR}/populate_from_dn_file.sh"
+    # Collect the users
+    "${DATA_DIR}/collect_dns.sh" >/dev/null 2>&1
+    if [[ "${?}" == 0 ]]; then
+        # Populate the users
+        "${DATA_DIR}/populate_from_dn_file.sh"
+        if [[ "${?}" == 0 ]]; then
+            inform "Successfully populated users from LDAP"
+        else
+            fail "User population from LDAP failed"
+        fi
+    else
+        fail "User population from LDAP failed"
+    fi
+    
+    inform "Waiting for signals from Docker engine..."
 
 }
 
 # Synchronize users with LDAP
 function synchronizeUsers() {
 
-    "${DATA_DIR}/sync_all_dns.sh"
+    # Sync the users
+    "${DATA_DIR}/sync_all_dns.sh" >/dev/null 2>&1
+    if [[ "${?}" == 0 ]]; then
+        inform "Successfully synchronized users with LDAP"
+    else
+        fail "User synchronization with LDAP failed"
+    fi 
+    
+    inform "Waiting for signals from Docker engine..."
 
 }
