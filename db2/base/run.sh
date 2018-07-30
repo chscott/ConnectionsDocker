@@ -30,6 +30,3 @@ else
         inform "DB2 install succeeded"
     fi
 fi
-
-# Wait for user input
-waitForSignals
