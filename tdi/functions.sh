@@ -49,7 +49,7 @@ function configSolutionDir() {
         sed -i "s|^\(source_ldap_search_filter=\).*|\1${LDAP_SEARCH_FILTER}|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|^\(dbrepos_jdbc_url=\).*|\1jdbc:db2://${DB2_HOST}:${DB2_PORT}/peopledb|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|^\(dbrepos_username=\).*|\1${DB2_INSTANCE_USER}|" "${DATA_DIR}/profiles_tdi.properties"
-        sed -i "s|^\(dbrepos_password=\).*|\1${DB2_INSTANCE_PWD}|" "${DATA_DIR}/profiles_tdi.properties"
+        sed -i "s|^\({protect}-dbrepos_password=\).*|\1${DB2_INSTANCE_PWD}|" "${DATA_DIR}/profiles_tdi.properties"
     fi 
 
     # Replace map_dbrepos_from_source.properties with one preconfigured for the requested LDAP, if provided
