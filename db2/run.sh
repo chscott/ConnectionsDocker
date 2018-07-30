@@ -19,6 +19,7 @@
 # DB2 instance will be started and available for use.
 
 WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="/app"
 DATA_DIR="/data"
 INSTANCE_DIR="${DATA_DIR}/db2inst1"
 

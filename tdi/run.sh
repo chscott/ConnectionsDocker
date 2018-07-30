@@ -4,6 +4,7 @@
 # directory for use with Connections.
 
 WORK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="/app"
 DATA_DIR="/data"
 
 # Download TDI functions and common utilities. SETUP_URL can be overridden by setting it as an environment variable

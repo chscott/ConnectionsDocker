@@ -25,15 +25,15 @@ function createSolutionDir() {
     tar -xf "${TDISOL_PACKAGE}" --directory "${DATA_DIR}" --strip-components=1
     chmod -R u+x "${DATA_DIR}"/*.sh
     chmod u+x "${DATA_DIR}/netstore"
-    
-    # Update tdienv.sh with the correct path
-    sed -i "s|\(TDIPATH=\).*|\1\"${DATA_DIR}\"|" "${DATA_DIR}/tdienv.sh" || { fail "Unable to update tdienv.sh"; return 1; }
 
 }
 
 # Configure the solution directory for Connections
 function configSolutionDir() {
 
+    # Update tdienv.sh with the correct path
+    sed -i "s|\(TDIPATH=\).*|\1\"${APP_DIR}\"|" "${DATA_DIR}/tdienv.sh" || { fail "Unable to update tdienv.sh"; return 1; }
+    
     # Update profiles_tdi.properties if the environment values were provided
     if [[ -z "${LDAP_HOST}" || -z "${LDAP_PORT}" || -z "${LDAP_BIND_DN}" || -z "${LDAP_BIND_PWD}" ||
           -z "${LDAP_SEARCH_BASE}" || -z "${LDAP_SEARCH_FILTER}" || -z "${DB2_HOST}" ||
