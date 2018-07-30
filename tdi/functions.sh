@@ -84,7 +84,7 @@ function populateUsers() {
     "${DATA_DIR}/collect_dns.sh" >/dev/null 2>&1
     if [[ "${?}" == 0 ]]; then
         # Populate the users
-        "${DATA_DIR}/populate_from_dn_file.sh"
+        "${DATA_DIR}/populate_from_dn_file.sh" >/dev/null 2>&1
         if [[ "${?}" == 0 ]]; then
             inform "Successfully populated users from LDAP"
         else
