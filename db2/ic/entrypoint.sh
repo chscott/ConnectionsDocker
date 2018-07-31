@@ -8,14 +8,14 @@ if [[ -z "${SETUP_URL}" ]]; then
 fi
 
 # Download the run script and utilities
-curl -L -O -J -s -S -f "${SETUP_URL}/db2/run.sh" || printf "WARN: Unable to download ${SETUP_URL}/db2/run.sh. Trying local run.sh...\n"
+curl -L -O -J -s -S -f "${SETUP_URL}/db2/run.sh" || printf "W: Unable to download ${SETUP_URL}/db2/run.sh. Trying local run.sh...\n"
 
 if [[ -f "${WORK_DIR}/run.sh" ]]; then
     # Make the run script executable
     chmod +x "${WORK_DIR}/run.sh"
     # Replace this process with run.sh
-    exec "${WORK_DIR}/run.sh" || { printf "FAIL: Error encountered trying to run run.sh. Exiting\n"; exit 1; }
+    exec "${WORK_DIR}/run.sh" || { printf "F: Error encountered trying to run run.sh. Exiting\n"; exit 1; }
 else
-    printf "FAIL: ${WORK_DIR}/run.sh does not exist. Exiting\n"
+    printf "F: ${WORK_DIR}/run.sh does not exist. Exiting\n"
     exit 1
 fi

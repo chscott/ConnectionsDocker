@@ -25,11 +25,15 @@ are ready to begin using the databases for Connections.
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt
    ```
-5. Open env.txt and update the URLs for your environment. These are the locations at which the DB2 install and license
-   packages are hosted in your environment. These files will be downloaded during installation.
+5. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
+   and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. If you want to 
+   install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented out. If you want
+   to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. If you want to install the 
+   Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. These files will be downloaded during 
+   installation.
    
 6. Create a subdirectory named setup. If you used the example directory in Step 1, it will be located at 
-   ~/images/db2/base/setup.
+   ~/images/db2/ic/setup.
    
 7. Change directories to the setup directory created in Step 6.
 
