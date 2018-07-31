@@ -24,7 +24,7 @@ DATA_DIR="/data"
 INSTANCE_DIR="${DATA_DIR}/db2inst1"
 
 # Download DB2 functions and common utilities. SETUP_URL can be overridden by setting it as an environment variable
-curl -L -O -J -s -S -f "${SETUP_URL}/db2/functions.sh" || { printf "F: Download of ${SETUP_URL}/db2/functions.sh failed"; exit 1; }
+curl -L -O -J -s -S -f "${SETUP_URL}/db2/ic/functions.sh" || { printf "F: Download of ${SETUP_URL}/db2/functions.sh failed"; exit 1; }
 curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download of ${SETUP_URL}/common/utils.sh failed"; exit 1; }
 
 # Source DB2 functions and common utilities

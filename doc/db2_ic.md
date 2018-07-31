@@ -37,10 +37,10 @@ are ready to begin using the databases for Connections.
    
 7. Change directories to the setup directory created in Step 6.
 
-8. Copy entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh.
+8. Copy entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
 
    ```
-   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh
+   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh
    ```
 
 9. Make the entrypoint.sh script executable.
@@ -51,11 +51,11 @@ are ready to begin using the databases for Connections.
    
 10. At this point, you should have the following directories/files:
 
-    - ~/images/db2/base/Dockerfile
-    - ~/images/db2/base/env.txt
-    - ~/images/db2/base/setup/entrypoint.sh
+    - ~/images/db2/ic/Dockerfile
+    - ~/images/db2/ic/env.txt
+    - ~/images/db2/ic/setup/entrypoint.sh
    
-11. Change directories to the directory created in Step 1. For example, ~/images/db2/base.
+11. Change directories to the directory created in Step 1. For example, ~/images/db2/ic.
 
 12. Build the image.
 

@@ -8,7 +8,7 @@ if [[ -z "${SETUP_URL}" ]]; then
 fi
 
 # Download the run script and utilities
-curl -L -O -J -s -S -f "${SETUP_URL}/db2/run.sh" || printf "W: Unable to download ${SETUP_URL}/db2/run.sh. Trying local run.sh...\n"
+curl -L -O -J -s -S -f "${SETUP_URL}/db2/ic/run.sh" || printf "W: Unable to download ${SETUP_URL}/db2/run.sh. Trying local run.sh...\n"
 
 if [[ -f "${WORK_DIR}/run.sh" ]]; then
     # Make the run script executable
