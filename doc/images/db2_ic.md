@@ -1,7 +1,7 @@
 ## DB2 for Connections image
 
 In this guide, we'll walk through creating a Docker DB2 image for Connections. This image inherits the installed DB2 server
-via the [DB2 base image](doc/db2_base.md) and uses additional run-time artifacts to create an instance for use with 
+via the [DB2 base image](doc/images/db2_base.md) and uses additional run-time artifacts to create an instance for use with 
 Connections. All configuration steps from the documentation are performed automatically, including the creation of 
 Connections databases.
 
@@ -60,7 +60,7 @@ are ready to begin using the databases for Connections.
 12. Build the image.
 
     ```
-    $ docker build -t db2/11.1.1/preinstall .
+    $ docker build -t db2/11.1.1/ic .
     ```
     
 13. Confirm the image was created successfully.
@@ -69,68 +69,5 @@ are ready to begin using the databases for Connections.
     $ docker image ls
     ```
     
-14. Run a container based on the new DB2 base image.
-
-    ```
-    $ docker run --name db2_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file env.txt -d db2/11.1.1/preinstall
-    ```
-    
-15. Start a shell in the running container.
-
-    ```
-    $ docker exec -it db2_install bash
-    ```
-    
-16. Run the entrypoint.sh script.
-
-    ```
-    $ ./entrypoint.sh
-    ```
-    
-17. Confirm DB2 has installed successfully by reviewing db2_install.log in the current directory in the container.
-
-18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
-    forward. Deleting them now reduces the size of the image we are about to create.
-    
-    ```
-    $ cd /
-    $ rm -f -r /setup
-    ```
-    
-19. Exit the container shell.
-
-    ```
-    $ exit
-    ```
- 
-20. Stop the db2_install container.
-
-    ```
-    $ docker stop db2_install
-    ```
-    
-21. Commit the changes made to the db2_install container to a new image.
-
-    ```
-    $ docker commit db2_install db2/11.1.1/base
-    ```
-    
-22. Confirm the image was created successfully.
-
-    ```
-    $ docker image ls
-    ```
-    
-23. Remove the db2_install container, as it is no longer needed.
-
-    ```
-    $ docker container rm db2_install
-    ```
-    
-23. Remove the preinstall image, as it is no longer needed.
-
-    ```
-    $ docker image rm db2/11.1.1/preinstall
-    ```
-    
-You have now successfully created the DB2 base image.
+You have now successfully created the DB2 for Connections image. For next steps, review the documentation for running a 
+[DB2 for Connections container](doc/containers/db2_ic.md).
