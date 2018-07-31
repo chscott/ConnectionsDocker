@@ -1,10 +1,10 @@
 ## DB2 base image
 
-In this guide, we'll walk through creating a Docker image for DB2. This image will later serve as the base image for our DB2
-for Connections image.
+In this guide, we'll walk through creating a Docker image for DB2. This image will contain an installed DB2 server that will 
+serve as the base image for a DB2 for Connections image.
 
-Note that this image uses centos/systemd as its base image. This is required due to a dependency in the DB2 installer. If 
-systemd is not available, the fault manager component will fail to install, causing the entire DB2 installation to fail.
+Note that this image uses centos/systemd as its own base image. This is required due to a dependency in the DB2 installer. If 
+systemd is not available, the DB2 fault manager component will fail to install, causing the entire DB2 installation to fail.
 
 ### Steps
 
