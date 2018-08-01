@@ -26,7 +26,7 @@ function installDB2() {
     printf "PROD = DB2_SERVER_EDITION\n" >> "db2_install.rsp"
     printf "LIC_AGREEMENT = ACCEPT\n" >> "db2_install.rsp"
     printf "INSTALL_TYPE = TYPICAL\n" >> "db2_install.rsp"
-    printf "FILE = /app\n" >> "db2_install.rsp"
+    printf "FILE = ${APP_DIR}\n" >> "db2_install.rsp"
 
     # Install DB2
     inform "Performing DB2 install..."
@@ -45,12 +45,12 @@ function installDB2() {
 
     # Validate the install
     inform "Validating DB2 install..."
-    "/app/bin/db2val" -a -l "db2val.log" >/dev/null
+    "${APP_DIR}/bin/db2val" -a -l "db2val.log" >/dev/null
     grep "DBI1335I" "db2val.log" >/dev/null || { fail "DB2 validation failed"; return 1; }
 
     # Apply the DB2 license
     inform "Applying DB2 license..."
-    "/app/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; return 1; }
+    "${APP_DIR}/adm/db2licm" -a "aese_u/db2/license/db2aese_u.lic" >/dev/null || { fail "DB2 license installation failed"; return 1; }
 
     inform "Completed DB2 server install"
 

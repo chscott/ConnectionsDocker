@@ -8,82 +8,86 @@ systemd is not available, the DB2 fault manager component will fail to install, 
 
 ### Steps
 
-1. On the Docker host system, create a directory to hold the image artifacts. For example, ~/images/db2/base.
+1. On the Docker host system, create a directory to hold the image artifacts. For this guide, we'll use ~/images/db2/base.
 
-2. Change directories to the directory created in Step 1.
+2. Change to the ~/images/db2/base directory.
 
-3. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/Dockerfile. 
+3. Download env.txt from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/env.txt.
+   
+   ```
+   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/env.txt
+   ```
+   
+4. Open env.txt and update the URLs for your environment. These are the locations at which the DB2 install and license
+   packages are hosted in your environment. These files will be downloaded during installation.
+   
+5. Create the ~/images/db2/base/image directory.
+
+6. Change to the ~/images/db2/base/image directory.
+
+7. Download the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/Dockerfile. 
 
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/Dockerfile
    ```
    
-4. Copy env.txt from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/env.txt.
+8. Create the ~/images/db2/base/image/setup directory.
    
-   ```
-   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/env.txt
-   ```
-5. Open env.txt and update the URLs for your environment. These are the locations at which the DB2 install and license
-   packages are hosted in your environment. These files will be downloaded during installation.
+9. Change to the ~/images/db2/base/image/setup directory.
+
+10. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh.
+
+    ```
+    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh
+    ```
+
+11. Make the entrypoint.sh script executable.
+
+    ```
+    $ chmod u+x entrypoint.sh
+    ```
    
-6. Create a subdirectory named setup. If you used the example directory in Step 1, it will be located at 
-   ~/images/db2/base/setup.
-   
-7. Change directories to the setup directory created in Step 6.
+12. At this point, you should have the following directories/files:
 
-8. Copy entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh.
-
-   ```
-   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/base/entrypoint.sh
-   ```
-
-9. Make the entrypoint.sh script executable.
-
-   ```
-   $ chmod u+x entrypoint.sh
-   ```
-   
-10. At this point, you should have the following directories/files:
-
-    - ~/images/db2/base/Dockerfile
     - ~/images/db2/base/env.txt
-    - ~/images/db2/base/setup/entrypoint.sh
+    - ~/images/db2/base/image/Dockerfile
+    - ~/images/db2/base/image/setup/entrypoint.sh
    
-11. Change directories to the directory created in Step 1. For example, ~/images/db2/base.
+13. Change to the ~/images/db2/base/image directory.
 
-12. Build the image.
+14. Build the image.
 
     ```
     $ docker build -t db2/11.1.1/preinstall .
     ```
     
-13. Confirm the image was created successfully.
+15. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-14. Run a container based on the new DB2 base image.
+16. Run a container based on the new DB2 base image.
 
     ```
-    $ docker run --name db2_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file env.txt -d db2/11.1.1/preinstall
+    $ docker run --name db2_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file ~/images/db2/base/env.txt -d db2/11.1.1/preinstall
     ```
     
-15. Start a shell in the running container.
+17. Start a shell in the running container.
 
     ```
     $ docker exec -it db2_install bash
     ```
     
-16. Run the entrypoint.sh script.
+18. Run the entrypoint.sh script.
 
     ```
     $ ./entrypoint.sh
     ```
     
-17. Confirm DB2 has installed successfully by reviewing db2_install.log in the current directory in the container.
+19. Confirm DB2 has installed successfully by reviewing db2_install.log in the current directory in the container.
 
-18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
+20. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
     forward. Deleting them now reduces the size of the image we are about to create.
     
     ```
@@ -91,37 +95,37 @@ systemd is not available, the DB2 fault manager component will fail to install, 
     $ rm -f -r /setup
     ```
     
-19. Exit the container shell.
+21. Exit the container shell.
 
     ```
     $ exit
     ```
  
-20. Stop the db2_install container.
+22. Stop the db2_install container.
 
     ```
     $ docker stop db2_install
     ```
     
-21. Commit the changes made to the db2_install container to a new image.
+23. Commit the changes made to the db2_install container to a new image.
 
     ```
     $ docker commit db2_install db2/11.1.1/base
     ```
     
-22. Confirm the image was created successfully.
+24. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-23. Remove the db2_install container, as it is no longer needed.
+25. Remove the db2_install container, as it is no longer needed.
 
     ```
     $ docker container rm db2_install
     ```
     
-23. Remove the preinstall image, as it is no longer needed.
+26. Remove the preinstall image, as it is no longer needed.
 
     ```
     $ docker image rm db2/11.1.1/preinstall

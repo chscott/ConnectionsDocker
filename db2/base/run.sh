@@ -16,7 +16,7 @@ curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download o
 . "${WORK_DIR}/utils.sh"
 
 # See if DB2 has already been installed
-if [[ -f "/app/logs/db2install.history" ]]; then
+if [[ -f "${APP_DIR}/logs/db2install.history" ]]; then
     # DB2 is already installed, so skip the install
     inform "DB2 has already been installed. Skipping install"
 else
