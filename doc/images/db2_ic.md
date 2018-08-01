@@ -27,12 +27,12 @@ Create the [DB2 base image](db2_base.md).
 4. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
    and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. 
    
-   If you want to install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented 
-   out. 
+   - If you want to install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented 
+     out. 
    
-   If you want to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. 
+   - If you want to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. 
    
-   If you want to install the Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. 
+   - If you want to install the Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. 
    
    These files will be downloaded during the initialization process.
    
