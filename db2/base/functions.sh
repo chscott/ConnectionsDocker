@@ -11,9 +11,9 @@ function installDB2() {
         return 1
     else
         inform "Downloading ${DB2_INSTALL_URL}..."
-        curl -L -O -J -s -S -f "${DB2_INSTALL_URL}" || { printf "F: Download of ${DB2_INSTALL_URL} failed"; return 1; }
+        curl -L -O -J -s -S -f "${DB2_INSTALL_URL}" || { fail "Download of ${DB2_INSTALL_URL} failed"; return 1; }
         inform "Downloading ${DB2_LICENSE_URL}..."
-        curl -L -O -J -s -S -f "${DB2_LICENSE_URL}" || { printf "F: Download of ${DB2_LICENSE_URL} failed"; return 1; }
+        curl -L -O -J -s -S -f "${DB2_LICENSE_URL}" || { fail "Download of ${DB2_LICENSE_URL} failed"; return 1; }
     fi
 
     # Extract the install files
