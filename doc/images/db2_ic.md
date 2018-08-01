@@ -83,4 +83,4 @@ Create the [DB2 base image](db2_base.md).
     ```
     
 You have now successfully created the DB2 for Connections image. For next steps, review the documentation for running a 
-[DB2 for Connections container](doc/containers/db2_ic.md).
+[DB2 for Connections container](../containers/db2_ic.md).
