@@ -14,34 +14,45 @@ Create the [DB2 base image](db2_base.md).
 
 ### Steps
 
-1. On the Docker host system, create a directory to hold the image artifacts. For example, ~/images/db2/ic.
+1. On the Docker host system, create a directory to hold the image artifacts. For this guide, we'll use ~/images/db2/ic.
 
-2. Change directories to the directory created in Step 1.
+2. Change to the ~/images/db2/ic directory.
 
-3. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
-
-   ```
-   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile
-   ```
-   
-4. Copy env.txt from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt.
+3. Download env.txt from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt.
    
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt
    ```
-5. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
-   and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. If you want to 
-   install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented out. If you want
-   to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. If you want to install the 
-   Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. These files will be downloaded during 
-   installation.
+ 
+4. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
+   and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. 
    
-6. Create a subdirectory named setup. If you used the example directory in Step 1, it will be located at 
-   ~/images/db2/ic/setup.
+   If you want to install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented 
+   out. 
+   
+   If you want to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. 
+   
+   If you want to install the Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. 
+   
+   These files will be downloaded during the initialization process.
+   
+5. Create the ~/images/db2/ic/image directory.
+
+6. Change to the ~/images/db2/ic/image directory.
+   
+7. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
+
+   ```
+   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile
+   ```  
+   
+8. Create the ~/images/db2/ic/image/setup directory.
+   
+9. Change to the ~/images/db2/ic/image/setup directory.
    
 7. Change directories to the setup directory created in Step 6.
 
-8. Copy entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
+9. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
 
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh
@@ -55,11 +66,11 @@ Create the [DB2 base image](db2_base.md).
    
 10. At this point, you should have the following directories/files:
 
-    - ~/images/db2/ic/Dockerfile
     - ~/images/db2/ic/env.txt
-    - ~/images/db2/ic/setup/entrypoint.sh
+    - ~/images/db2/ic/image/Dockerfile
+    - ~/images/db2/ic/image/setup/entrypoint.sh
    
-11. Change directories to the directory created in Step 1. For example, ~/images/db2/ic.
+11. Change to the ~/images/db2/ic/image directory.
 
 12. Build the image.
 
