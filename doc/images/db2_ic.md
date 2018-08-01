@@ -8,6 +8,10 @@ Connections databases.
 This image is intended to create a turn-key solution. Containers started from this image perform a short initialization and
 are then ready to use with Connections.
 
+### Prerequisite
+
+Create the [DB2 base image](db2_base.md).
+
 ### Steps
 
 1. On the Docker host system, create a directory to hold the image artifacts. For example, ~/images/db2/ic.
