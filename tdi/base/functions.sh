@@ -46,7 +46,8 @@ function installTDI() {
 
     # Install TDI base
     inform "Performing TDI install..."
-    "linux_x86_64/$(ls "linux_x86_64")" -f "tdi_install.rsp" -i silent -D\$TDI_NOSHORTCUTS\$="true" >"tdi_install.log" 2>&1
+    cd "linux_x86_64"
+    ./"$(ls "linux_x86_64")" -r "tdi_install.rsp" -i silent -D\$TDI_NOSHORTCUTS\$="true" >"tdi_install.log" 2>&1
     if [[ "${?}" != 0 ]]; then
         fail "TDI installation failed"
         return 1
