@@ -65,7 +65,12 @@ function installTDI() {
     
     # Copy the database JAR files
     inform "Copying DB2 JAR files to TDI..."
-    cp -f "${DB2_JCC_JAR}" 
+    cp -f "${DB2_JCC_JAR}" "${APP_DIR}/jvm/jre/lib/ext"
+    cp -f "${DB2_JCCLICENSE_JAR}" "${APP_DIR}/jvm/jre/lib/ext"
+    
+    # Update ibmdisrv Java heap size
+    inform "Updating Java heap size for ibmdisrv..."
+    sed -i 's|\(\"$TDI_JAVA_PROGRAM\"\)|\1 -Xms1024M -Xmx2048M|' "${APP_DIR}/ibmdisrv"
 
     inform "Completed TDI server install"
 
