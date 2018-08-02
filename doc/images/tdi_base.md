@@ -55,7 +55,7 @@ serve as the base image for a TDI for Connections image.
 14. Build the image.
 
     ```
-    $ docker build -t tdi/11.1.1/preinstall .
+    $ docker build -t tdi/7.1.1.6/preinstall .
     ```
     
 15. Confirm the image was created successfully.
@@ -67,7 +67,7 @@ serve as the base image for a TDI for Connections image.
 16. Run a container based on the new TDI base image.
 
     ```
-    $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -d tdi/11.1.1/preinstall
+    $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -d tdi/7.1.1.6/preinstall
     ```
     
 17. Follow the container logs to monitor progress of the TDI installation.
@@ -101,7 +101,7 @@ serve as the base image for a TDI for Connections image.
 22. Commit the changes made to the tdi_install container to a new image.
 
     ```
-    $ docker commit tdi_install tdi/11.1.1/base
+    $ docker commit tdi_install tdi/7.1.1.6/base
     ```
     
 23. Confirm the image was created successfully.
@@ -119,7 +119,7 @@ serve as the base image for a TDI for Connections image.
 25. Remove the preinstall image, as it is no longer needed.
 
     ```
-    $ docker image rm tdi/11.1.1/preinstall
+    $ docker image rm tdi/7.1.1.6/preinstall
     ```
     
 You have now successfully created the TDI base image.
