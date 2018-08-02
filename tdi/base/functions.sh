@@ -46,8 +46,9 @@ function installTDI() {
 
     # Install TDI base
     inform "Performing TDI install..."
+    # "Command Line Arguments contain illegal values" error if you don't change to the binary directory first
     cd "linux_x86_64"
-    ./"$(ls "linux_x86_64")" -r "tdi_install.rsp" -i silent -D\$TDI_NOSHORTCUTS\$="true" >"tdi_install.log" 2>&1
+    ./"$(ls "linux_x86_64")" -f "${WORK_DIR}/tdi_install.rsp" -i silent -D\$TDI_NOSHORTCUTS\$="true" >"tdi_install.log" 2>&1
     if [[ "${?}" != 0 ]]; then
         fail "TDI installation failed"
         return 1
