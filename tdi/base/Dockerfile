@@ -6,4 +6,6 @@ WORKDIR /setup
 
 COPY setup /setup
 
+RUN yum install -y unzip
+
 ENTRYPOINT ["./entrypoint.sh"]
