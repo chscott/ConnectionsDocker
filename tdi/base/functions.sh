@@ -13,9 +13,9 @@ function installTDI() {
         return 1
     else
         inform "Downloading ${TDI_INSTALL_URL}..."
-        curl -L -O -J -s -S -f "${TDI_INSTALL_URL}" || { printf "F: Download of ${TDI_INSTALL_URL} failed"; return 1; }
+        curl -L -O -J -s -S -f "${TDI_INSTALL_URL}" || { fail "Download of ${TDI_INSTALL_URL} failed"; return 1; }
         inform "Downloading ${TDI_FIXPACK_URL}..."
-        curl -L -O -J -s -S -f "${TDI_FIXPACK_URL}" || { printf "F: Download of ${TDI_FIXPACK_URL} failed"; return 1; }
+        curl -L -O -J -s -S -f "${TDI_FIXPACK_URL}" || { fail "Download of ${TDI_FIXPACK_URL} failed"; return 1; }
     fi
 
     # Extract the install files
