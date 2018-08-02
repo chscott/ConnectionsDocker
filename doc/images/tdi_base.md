@@ -67,7 +67,7 @@ serve as the base image for a TDI for Connections image.
 16. Run a container based on the new TDI base image.
 
     ```
-    $ docker run --name tdi_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file ~/images/tdi/base/env.txt -d tdi/11.1.1/preinstall
+    $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -d tdi/11.1.1/preinstall
     ```
     
 17. Follow the container logs to monitor progress of the TDI installation.
