@@ -6,6 +6,9 @@ WORKDIR /setup
 
 COPY setup /setup
 
-RUN yum install -y unzip
+RUN yum install -y \
+    unzip \
+    which \
+    && yum clean all
 
 ENTRYPOINT ["./entrypoint.sh"]
