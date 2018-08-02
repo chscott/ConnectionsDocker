@@ -2,8 +2,6 @@ function installTDI() {
 
     local TDI_INSTALL_PACKAGE="$(echo "${TDI_INSTALL_URL}" | awk -F "/" '{print $NF}')"
     local TDI_FIXPACK_PACKAGE="$(echo "${TDI_FIXPACK_URL}" | awk -F "/" '{print $NF}')"
-    local DB2_JCC_JAR="$(echo "${DB2_JCC_URL}" | awk -F "/" '{print $NF}')"
-    local DB2_JCCLICENSE_JAR="$(echo "${DB2_JCCLICENSE_URL}" | awk -F "/" '{print $NF}')"
 
     inform "Beginning TDI install..."
 
