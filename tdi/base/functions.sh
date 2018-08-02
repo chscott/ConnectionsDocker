@@ -53,6 +53,8 @@ function installTDI() {
         fail "TDI installation failed"
         return 1
     fi
+    # Return to the work directory
+    cd "${WORK_DIR}"
 
     # Install TDI fixpack
     inform "Performing TDI fixpack install..."
