@@ -57,11 +57,12 @@ function installTDI() {
     cd "${WORK_DIR}"
 
     # Install TDI fixpack
+    set -x
     inform "Performing TDI fixpack install..."
     local TDI_FIXPACK_DIR="$(echo "${TDI_FIXPACK_PACKAGE}" | awk -F ".zip" '{print $1}')"
     local TDI_FIXPACK_FILE="$(echo "${TDI_FIXPACK_PACKAGE}" | awk -F "-" '{print $3"-"$1"-"$4}')"
     cp -f "${TDI_FIXPACK_DIR}/UpdateInstaller.jar" "${APP_DIR}/maintenance"
-    "${APP_DIR}/bin/applyUpdates.sh" -update "${TDI_FIXPACK_DIR}/${TDI_FIXPACK_FILE}"
+    "${APP_DIR}/bin/applyUpdates.sh" -update "${TDI_FIXPACK_DIR}/${TDI_FIXPACK_FILE}" >"${WORK_DIR}/tdi_fixpack_install.log" 2>&1
     if [[ "${?}" != 0 ]]; then
         fail "TDI fixpack installation failed"
         return 1
