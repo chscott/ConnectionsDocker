@@ -55,7 +55,6 @@ function installTDI() {
     cd "${WORK_DIR}"
 
     # Install TDI fixpack
-    set -x
     inform "Performing TDI fixpack install..."
     local TDI_FIXPACK_DIR="$(echo "${TDI_FIXPACK_PACKAGE}" | awk -F ".zip" '{print $1}')"
     local TDI_FIXPACK_FILE="$(echo "${TDI_FIXPACK_PACKAGE}" | awk -F "-" '{print $3"-"$1"-"$4}')"
