@@ -8,14 +8,18 @@ function installTDI() {
     inform "Beginning TDI install..."
 
     # Download the install packages
-    if [[ -z "${TDI_INSTALL_URL}" || -z "${TDI_FIXPACK_URL}" ]]; then
-        fail "The TDI_INSTALL_URL and TDI_FIXPACK_URL environment variables must be specified when running the container"
+    if [[ -z "${TDI_INSTALL_URL}" || -z "${TDI_FIXPACK_URL}" || -z "${DB2_JCC_URL}" || -z "${DB2_JCCLICENSE_URL}" ]]; then
+        fail "The following environment variables must be specified when running the container: TDI_INSTALL_URL, TDI_FIXPACK_URL, DB2_JCC_URL and DB2_JCCLICENSE_URL"
         return 1
     else
         inform "Downloading ${TDI_INSTALL_URL}..."
         curl -L -O -J -s -S -f "${TDI_INSTALL_URL}" || { fail "Download of ${TDI_INSTALL_URL} failed"; return 1; }
         inform "Downloading ${TDI_FIXPACK_URL}..."
         curl -L -O -J -s -S -f "${TDI_FIXPACK_URL}" || { fail "Download of ${TDI_FIXPACK_URL} failed"; return 1; }
+        inform "Downloading ${DB2_JCC_URL}..."
+        curl -L -O -J -s -S -f "${DB2_JCC_URL}" || { fail "Download of ${DB2_JCC_URL} failed"; return 1; }
+        inform "Downloading ${DB2_JCCLICENSE_URL}..."
+        curl -L -O -J -s -S -f "${DB2_JCCLICENSE_URL}" || { fail "Download of ${DB2_JCCLICENSE_URL} failed"; return 1; }
     fi
 
     # Extract the install files
