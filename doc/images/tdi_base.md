@@ -67,16 +67,18 @@ serve as the base image for a TDI for Connections image.
 16. Run a container based on the new TDI base image.
 
     ```
-    $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -d tdi/7.1.1.6/preinstall
+    $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -it tdi/7.1.1.6/preinstall
     ```
     
-17. Follow the container logs to monitor progress of the TDI installation and confirm successful installation.
+17. Run the entrypoint.sh script.
 
     ```
-    $ docker logs --follow tdi_install
+    $ ./entrypoint.sh
     ```
     
-18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
+18. Confirm DB2 has installed successfully by reviewing tdi_install.log in the current directory in the container.
+    
+19. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
     forward. Deleting them now reduces the size of the image we are about to create.
     
     ```
@@ -84,37 +86,37 @@ serve as the base image for a TDI for Connections image.
     $ rm -f -r /setup
     ```
     
-19. Exit the container shell.
+20. Exit the container shell.
 
     ```
     $ exit
     ```
  
-20. Stop the tdi_install container.
+21. Stop the tdi_install container.
 
     ```
     $ docker stop tdi_install
     ```
     
-21. Commit the changes made to the tdi_install container to a new image.
+22. Commit the changes made to the tdi_install container to a new image.
 
     ```
     $ docker commit tdi_install tdi/7.1.1.6/base
     ```
     
-22. Confirm the image was created successfully.
+23. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-23. Remove the tdi_install container, as it is no longer needed.
+24. Remove the tdi_install container, as it is no longer needed.
 
     ```
     $ docker container rm tdi_install
     ```
     
-24. Remove the preinstall image, as it is no longer needed.
+25. Remove the preinstall image, as it is no longer needed.
 
     ```
     $ docker image rm tdi/7.1.1.6/preinstall
