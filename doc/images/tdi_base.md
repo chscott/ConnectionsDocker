@@ -70,15 +70,13 @@ serve as the base image for a TDI for Connections image.
     $ docker run --name tdi_install --env-file ~/images/tdi/base/env.txt -d tdi/7.1.1.6/preinstall
     ```
     
-17. Follow the container logs to monitor progress of the TDI installation.
+17. Follow the container logs to monitor progress of the TDI installation and confirm successful installation.
 
     ```
     $ docker logs --follow tdi_install
     ```
     
-18. Confirm TDI has installed successfully by reviewing tdi_install.log in the current directory in the container.
-
-19. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
+18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
     forward. Deleting them now reduces the size of the image we are about to create.
     
     ```
@@ -86,37 +84,37 @@ serve as the base image for a TDI for Connections image.
     $ rm -f -r /setup
     ```
     
-20. Exit the container shell.
+19. Exit the container shell.
 
     ```
     $ exit
     ```
  
-21. Stop the tdi_install container.
+20. Stop the tdi_install container.
 
     ```
     $ docker stop tdi_install
     ```
     
-22. Commit the changes made to the tdi_install container to a new image.
+21. Commit the changes made to the tdi_install container to a new image.
 
     ```
     $ docker commit tdi_install tdi/7.1.1.6/base
     ```
     
-23. Confirm the image was created successfully.
+22. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-24. Remove the tdi_install container, as it is no longer needed.
+23. Remove the tdi_install container, as it is no longer needed.
 
     ```
     $ docker container rm tdi_install
     ```
     
-25. Remove the preinstall image, as it is no longer needed.
+24. Remove the preinstall image, as it is no longer needed.
 
     ```
     $ docker image rm tdi/7.1.1.6/preinstall
