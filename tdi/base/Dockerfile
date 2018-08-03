@@ -10,5 +10,3 @@ RUN yum install -y \
     unzip \
     which \
     && yum clean all
-
-ENTRYPOINT ["./entrypoint.sh"]
