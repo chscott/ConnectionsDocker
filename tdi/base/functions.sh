@@ -73,8 +73,8 @@ function installTDI() {
     
     # Copy the database JAR files
     inform "Copying DB2 JAR files to TDI..."
-    cp -f "${DB2_JCC_JAR}" "${APP_DIR}/jvm/jre/lib/ext"
-    cp -f "${DB2_JCCLICENSE_JAR}" "${APP_DIR}/jvm/jre/lib/ext"
+    cp -f "${DB2_JCC_JAR}" "${APP_DIR}/jvm/jre/lib/ext" && chmod 755 "${APP_DIR}/jvm/jre/lib/ext/${DB2_JCC_JAR}"
+    cp -f "${DB2_JCCLICENSE_JAR}" "${APP_DIR}/jvm/jre/lib/ext" && chmod 755 "${APP_DIR}/jvm/jre/lib/ext/${DB2_JCCLICENSE_JAR}"
     
     # Update ibmdisrv Java heap size
     inform "Updating Java heap size for ibmdisrv..."
