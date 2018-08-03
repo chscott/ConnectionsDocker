@@ -89,32 +89,26 @@ serve as the base image for a TDI for Connections image.
     ```
     $ exit
     ```
- 
-20. Stop the tdi_install container.
-
-    ```
-    $ docker stop tdi_install
-    ```
     
-21. Commit the changes made to the tdi_install container to a new image.
+20. Commit the changes made to the tdi_install container to a new image.
 
     ```
     $ docker commit tdi_install tdi/7.1.1.6/base
     ```
     
-22. Confirm the image was created successfully.
+21. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-23. Remove the tdi_install container, as it is no longer needed.
+22. Remove the tdi_install container, as it is no longer needed.
 
     ```
     $ docker container rm tdi_install
     ```
     
-24. Remove the preinstall image, as it is no longer needed.
+23. Remove the preinstall image, as it is no longer needed.
 
     ```
     $ docker image rm tdi/7.1.1.6/preinstall
