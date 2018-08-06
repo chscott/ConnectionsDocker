@@ -56,8 +56,9 @@ serve as the base image for a TDI for Connections image.
     $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/tdi/base/env-tdi-base.txt
     ```
    
-13. Open env.txt and update the URLs for your environment. These are the locations at which the TDI install and fixpack
-    packages plus the required DB2 JARs are hosted in your environment. These files will be downloaded during installation.
+13. Open env-tdi-base.txt and update the URLs for your environment. These are the locations at which the TDI install and 
+    fixpack packages plus the required DB2 JARs are hosted in your environment. These files will be downloaded during 
+    installation.
     
 14. Run a container based on the new TDI base image.
 
