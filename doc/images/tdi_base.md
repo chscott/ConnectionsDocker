@@ -50,7 +50,8 @@ serve as the base image for a TDI for Connections image.
     $ docker image ls
     ```
     
-12. Change to the home directory and download env-tdi-base.txt.
+12. Change to the home directory and download env-tdi-base.txt from 
+    https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/tdi/base/env-tdi-base.txt.
    
     ```
     $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/tdi/base/env-tdi-base.txt
