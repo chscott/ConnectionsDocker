@@ -1,9 +1,8 @@
 ## TDI for Connections image
 
 In this guide, we'll walk through creating a Docker TDI image for Connections. This image inherits the installed TDI server
-via the [TDI base image](tdi_base.md) and adds additional run-time artifacts to create an instance for use with 
-Connections. All configuration steps from the documentation are performed automatically, including the configuration of the
-TDI solution directory.
+via the [TDI base image](tdi_base.md) and adds additional run-time artifacts to create a solution directory for use with 
+Connections. All configuration steps from the documentation are performed automatically.
 
 This image is intended to create a turn-key solution. Containers started from this image perform a short initialization and
 are then ready to use with Connections.
@@ -71,13 +70,13 @@ Create the [TDI base image](tdi_base.md).
      
      The port used for DB2 communication (typically 50000).
    
-   - **DB2_INSTANCE_USER**
+   - **DB2_PROFILES_USER**
      
-     The user account that owns the DB2 instance (defaults to db2inst1).
+     The user account that owns the profiles database (default is lcuser).
    
-   - **DB2_INSTANCE_PWD**
+   - **DB2_PROFILES_PWD**
      
-     The password for the user account that owns the DB2 instance.
+     The password for the user account that owns the profiles database.
    
 5. Create the ~/images/tdi/ic/image directory.
 

@@ -37,7 +37,7 @@ function configSolutionDir() {
     # Update profiles_tdi.properties if the environment values were provided
     if [[ -z "${LDAP_HOST}" || -z "${LDAP_PORT}" || -z "${LDAP_BIND_DN}" || -z "${LDAP_BIND_PWD}" ||
           -z "${LDAP_SEARCH_BASE}" || -z "${LDAP_SEARCH_FILTER}" || -z "${DB2_HOST}" ||
-          -z "${DB2_PORT}" || -z "${DB2_INSTANCE_USER}" || -z "${DB2_INSTANCE_PWD}" ]]
+          -z "${DB2_PORT}" || -z "${DB2_PROFILES_USER}" || -z "${DB2_PROFILES_PWD}" ]]
     then
         warn "TDI configuration properties were not provided. Manual configuration of ${DATA_DIR}/profiles_tdi.properties is required"
     else
@@ -48,8 +48,8 @@ function configSolutionDir() {
         sed -i "s|^\(source_ldap_search_base=\).*|\1${LDAP_SEARCH_BASE}|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|^\(source_ldap_search_filter=\).*|\1${LDAP_SEARCH_FILTER}|" "${DATA_DIR}/profiles_tdi.properties"
         sed -i "s|^\(dbrepos_jdbc_url=\).*|\1jdbc:db2://${DB2_HOST}:${DB2_PORT}/peopledb|" "${DATA_DIR}/profiles_tdi.properties"
-        sed -i "s|^\(dbrepos_username=\).*|\1${DB2_INSTANCE_USER}|" "${DATA_DIR}/profiles_tdi.properties"
-        sed -i "s|^\({protect}-dbrepos_password=\).*|\1${DB2_INSTANCE_PWD}|" "${DATA_DIR}/profiles_tdi.properties"
+        sed -i "s|^\(dbrepos_username=\).*|\1${DB2_PROFILES_USER}|" "${DATA_DIR}/profiles_tdi.properties"
+        sed -i "s|^\({protect}-dbrepos_password=\).*|\1${DB2_PROFILES_PWD}|" "${DATA_DIR}/profiles_tdi.properties"
     fi 
 
     # Replace map_dbrepos_from_source.properties with one preconfigured for the requested LDAP, if provided
@@ -75,27 +75,6 @@ function configSolutionDir() {
 
     fi
     
-}
-
-# Populate users from LDAP
-function populateUsers() {
-
-    # Collect the users
-    "${DATA_DIR}/collect_dns.sh" >/dev/null 2>&1
-    if [[ "${?}" == 0 ]]; then
-        # Populate the users
-        "${DATA_DIR}/populate_from_dn_file.sh" >/dev/null 2>&1
-        if [[ "${?}" == 0 ]]; then
-            inform "Successfully populated users from LDAP"
-        else
-            fail "User population from LDAP failed"
-        fi
-    else
-        fail "User population from LDAP failed"
-    fi
-    
-    inform "Waiting for signals from Docker engine..."
-
 }
 
 # Synchronize users with LDAP
