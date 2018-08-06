@@ -116,7 +116,7 @@ Create the [TDI base image](tdi_base.md).
 14. Build the image.
 
     ```
-    $ docker build -t tdi/11.1.1/ic .
+    $ docker build -t tdi/7.1.1.6/ic .
     ```
     
 15. Confirm the image was created successfully.

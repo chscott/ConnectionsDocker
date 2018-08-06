@@ -8,8 +8,8 @@ APP_DIR="/app"
 DATA_DIR="/data"
 
 # Download TDI functions and common utilities. SETUP_URL can be overridden by setting it as an environment variable
-curl -L -O -J -s -S -f "${SETUP_URL}/tdi/functions.sh" || { printf "F: Download of ${SETUP_URL}/tdi/functions.sh failed"; exit 1; }
-curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download of ${SETUP_URL}/common/utils.sh failed"; exit 1; }
+curl -L -O -J -s -S -f "${SETUP_URL}/tdi/ic/functions.sh" || { printf "F: Download of ${SETUP_URL}/tdi/functions.sh failed\n"; exit 1; }
+curl -L -O -J -s -S -f "${SETUP_URL}/common/utils.sh" || { printf "F: Download of ${SETUP_URL}/common/utils.sh failed\n"; exit 1; }
 
 # Source TDI functions and common utilities
 . "${WORK_DIR}/functions.sh"
