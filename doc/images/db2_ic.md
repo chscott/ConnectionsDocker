@@ -17,66 +17,48 @@ Create the [DB2 base image](db2_base.md).
 1. On the Docker host system, create a directory to hold the image artifacts. For this guide, we'll use ~/images/db2/ic.
 
 2. Change to the ~/images/db2/ic directory.
+   
+3. Create the ~/images/db2/ic directory.
 
-3. Download env.txt from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt.
+4. Change to the ~/images/db2/ic directory.
    
-   ```
-   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env.txt
-   ```
- 
-4. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
-   and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. 
-   
-   - If you want to install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented 
-     out. 
-   
-   - If you want to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. 
-   
-   - If you want to install the Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. 
-   
-   These files will be downloaded during the initialization process.
-   
-5. Create the ~/images/db2/ic/image directory.
-
-6. Change to the ~/images/db2/ic/image directory.
-   
-7. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
+5. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
 
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile
    ```  
    
-8. Create the ~/images/db2/ic/image/setup directory.
+6. Create the ~/images/db2/ic/setup directory.
    
-9. Change to the ~/images/db2/ic/image/setup directory.
+7. Change to the ~/images/db2/ic/setup directory.
    
-10. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
+8. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
 
-    ```
-    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh
-    ```
+   ```
+   $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh
+   ```
 
-11. Make the entrypoint.sh script executable.
+9. Make the entrypoint.sh script executable.
 
-    ```
-    $ chmod u+x entrypoint.sh
-    ```
+   ```
+   $ chmod u+x entrypoint.sh
+   ```
    
-12. At this point, you should have the following directories/files:
+10. At this point, you should have the following directories/files:
 
     - ~/images/db2/ic/env.txt
     - ~/images/db2/ic/image/Dockerfile
     - ~/images/db2/ic/image/setup/entrypoint.sh
    
-13. Change to the ~/images/db2/ic/image directory.
+11. Change to the ~/images/db2/ic/image directory.
 
-14. Build the image.
+12. Build the image.
 
     ```
     $ docker build -t db2/11.1.1/ic .
     ```
     
-15. Confirm the image was created successfully.
+13. Confirm the image was created successfully.
 
     ```
     $ docker image ls

@@ -127,7 +127,7 @@ systemd is not available, the DB2 fault manager component will fail to install, 
     $ docker image rm db2/11.1.1/preinstall
     ```
 
-22. Delete env-db2-base.txt, as it is no longer needed.
+25. Delete env-db2-base.txt, as it is no longer needed.
 
     ```
     $ rm ~/env-db2-base.txt
