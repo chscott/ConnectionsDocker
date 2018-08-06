@@ -47,7 +47,7 @@ the host system, and mounts the volume named db2_ic at /data. Note that this vol
 command. Databases will be created at CR2 level since CR2_UPDATE_URL is set in env.txt.
 
 ```
-$ docker run --name db2_ic --privileged --volume db2_ic:/data --publish 50000:50000 --env-file env.txt -d db2/11.1.1/ic
+$ docker run --name db2_ic --privileged --volume db2_ic:/data --publish 50000:50000 --env-file env-ic.txt -d db2/11.1.1/ic
 
 $ cat env.txt
 # Internal location of Connections database wizard package
