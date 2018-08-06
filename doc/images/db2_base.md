@@ -66,7 +66,7 @@ systemd is not available, the DB2 fault manager component will fail to install, 
 14. Run a container based on the new DB2 base image.
 
     ```
-    $ docker run --name db2_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file ~/env.txt -d db2/11.1.1/preinstall
+    $ docker run --name db2_install --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro --env-file ~/env-db2-base.txt -d db2/11.1.1/preinstall
     ```
     
 15. Start a shell in the running container.
