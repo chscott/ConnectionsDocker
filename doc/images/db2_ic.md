@@ -42,11 +42,10 @@ Create the [DB2 base image](db2_base.md).
    
 8. At this point, you should have the following directories/files:
 
-   - ~/images/db2/ic/env.txt
-   - ~/images/db2/ic/image/Dockerfile
-   - ~/images/db2/ic/image/setup/entrypoint.sh
+   - ~/images/db2/ic/Dockerfile
+   - ~/images/db2/ic/setup/entrypoint.sh
    
-9. Change to the ~/images/db2/ic/image directory.
+9. Change to the ~/images/db2/ic directory.
 
 10. Build the image.
 
