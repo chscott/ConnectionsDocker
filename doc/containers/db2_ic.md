@@ -26,7 +26,12 @@ $ docker run --name CONTAINER_NAME --privileged --volume VOLUME_NAME:/data --pub
                 CR1_UPDATE_URL (internal location of the CR1 database update package)
                 CR2_UPDATE_URL (internal location of the CR2 database update package)
                 
-The environment variables set via --env-file depend on the current state of the volume. 
+The environment variables set via --env-file depend on the current state of the volume. An example file can be downloaded
+from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-ic.txt
+
+```
+$ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-ic.txt
+```
 
 If the databases have not been created (i.e. the volume is new), then DB_WIZARDS_URL is required so the databases can be 
 created. In that state, both CR1_UPDATE_URL and CR2_UPDATE_URL are optional. If provided, the most recent CR updates will be 
