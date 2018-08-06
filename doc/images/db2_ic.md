@@ -18,47 +18,43 @@ Create the [DB2 base image](db2_base.md).
 
 2. Change to the ~/images/db2/ic directory.
    
-3. Create the ~/images/db2/ic directory.
-
-4. Change to the ~/images/db2/ic directory.
-   
-5. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
+3. Copy the Dockerfile from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile. 
 
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/Dockerfile
    ```  
    
-6. Create the ~/images/db2/ic/setup directory.
+4. Create the ~/images/db2/ic/setup directory.
    
-7. Change to the ~/images/db2/ic/setup directory.
+5. Change to the ~/images/db2/ic/setup directory.
    
-8. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
+6. Download entrypoint.sh from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh.
 
    ```
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/entrypoint.sh
    ```
 
-9. Make the entrypoint.sh script executable.
+7. Make the entrypoint.sh script executable.
 
    ```
    $ chmod u+x entrypoint.sh
    ```
    
-10. At this point, you should have the following directories/files:
+8. At this point, you should have the following directories/files:
 
-    - ~/images/db2/ic/env.txt
-    - ~/images/db2/ic/image/Dockerfile
-    - ~/images/db2/ic/image/setup/entrypoint.sh
+   - ~/images/db2/ic/env.txt
+   - ~/images/db2/ic/image/Dockerfile
+   - ~/images/db2/ic/image/setup/entrypoint.sh
    
-11. Change to the ~/images/db2/ic/image directory.
+9. Change to the ~/images/db2/ic/image directory.
 
-12. Build the image.
+10. Build the image.
 
     ```
     $ docker build -t db2/11.1.1/ic .
     ```
     
-13. Confirm the image was created successfully.
+11. Confirm the image was created successfully.
 
     ```
     $ docker image ls
