@@ -110,4 +110,10 @@ serve as the base image for a TDI for Connections image.
     $ docker image rm tdi/7.1.1.6/preinstall
     ```
     
+22. Delete env-tdi-base.txt, as it is no longer needed.
+
+    ```
+    $ rm ~/env-tdi-base.txt
+    ```
+    
 You have now successfully created the TDI base image.
