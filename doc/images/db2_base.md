@@ -39,7 +39,7 @@ systemd is not available, the DB2 fault manager component will fail to install, 
    - ~/images/db2/base/Dockerfile
    - ~/images/db2/base/setup/entrypoint.sh
    
-9. Change to the ~/images/db2/base/image directory.
+9. Change to the ~/images/db2/base directory.
 
 10. Build the image.
 
