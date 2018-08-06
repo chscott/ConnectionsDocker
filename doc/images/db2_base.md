@@ -81,7 +81,7 @@ systemd is not available, the DB2 fault manager component will fail to install, 
     $ ./entrypoint.sh
     ```
     
-17. Confirm DB2 has installed successfully by reviewing db2_install.log in the current directory in the container.
+17. Confirm DB2 has installed successfully.
 
 18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
     forward. Deleting them now reduces the size of the image we are about to create.
