@@ -24,17 +24,60 @@ Create the [TDI base image](tdi_base.md).
    $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/tdi/ic/env.txt
    ```
  
-4. Open env.txt and update the URLs for your environment. These are the locations at which the Connections database wizard
-   and CR1/CR2 update packages are hosted in your environment. Only the database wizard package is required. 
+4. Open env.txt and update the variables for your environment:
+
+   - **TDISOL_URL**
    
-   - If you want to install the Connections databases at 6.0 base release level, leave the CR1 and CR2 update URLs commented 
-     out. 
+     The internal download location of your TDI solution directory for Connections.
    
-   - If you want to install the Connections databases at 6.0 CR1 release level, uncomment the CR1 update URL. 
+   - **LDAP_TYPE**
    
-   - If you want to install the Connections databases at 6.0 CR2 release level, uncomment the CR2 update URL. 
+     The type of your LDAP system. Supported options are:
+     
+     - AD (Microsoft Active Directory)
+     - DOMINO (IBM Domino)
+     - DSEE (Oracle Directory Server Enterprise Edition)
+     - SDS (IBM Security Directory Server)
+     
+   - **LDAP_HOST**
    
-   These files will be downloaded during the initialization process.
+     The FQDN of your LDAP server.
+     
+   - **LDAP_PORT**
+   
+     The port used for LDAP communication (typically 389 or 636).
+     
+   - **LDAP_BIND_DN**
+     
+     The distinguished name used to bind to LDAP. For example, LDAP_BIND_DN=cn=ldapbind,ou=ic,dc=ad,dc=com.
+   
+   - **LDAP_BIND_PWD**
+     
+     The password for the distinguished name used to bind to LDAP.
+   
+   - **LDAP_SEARCH_BASE**
+     
+     The search base used for locating users and groups in LDAP. For example, LDAP_SEARCH_BASE=ou=ic,dc=ad,dc=com.
+   
+   - **LDAP_SEARCH_FILTER**
+     
+     The search filter used for locating users in LDAP. Note that special characters like '&' must be escaped with a backslash (\) character. For example: LDAP_SEARCH_FILTER=(\&(uid=*)(objectClass=inetOrgPerson)).
+   
+   - **DB2_HOST**
+     
+     The FQDN of your DB2 server.
+   
+   - **DB2_PORT**
+     
+     The port used for DB2 communication (typically 50000).
+   
+   - **DB2_INSTANCE_USER**
+     
+     The user account that owns the DB2 instance (defaults to db2inst1).
+   
+   - **DB2_INSTANCE_PWD**
+     
+     The password for the user account that owns the DB2 instance.
    
 5. Create the ~/images/tdi/ic/image directory.
 
