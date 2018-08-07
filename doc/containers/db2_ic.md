@@ -27,10 +27,10 @@ $ docker run --name CONTAINER_NAME --privileged --volume VOLUME_NAME:/data --pub
                 CR2_UPDATE_URL (internal location of the CR2 database update package)
                 
 The environment variables set via --env-file depend on the current state of the volume. An example file can be downloaded
-from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-ic.txt
+from https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-db2.txt
 
 ```
-$ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-ic.txt
+$ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/db2/ic/env-db2.txt
 ```
 
 If the databases have not been created (i.e. the volume is new), then DB_WIZARDS_URL is required so the databases can be 
@@ -47,9 +47,9 @@ the host system, and mounts the volume named db2_ic at /data. Note that this vol
 command. Databases will be created at CR2 level since CR2_UPDATE_URL is set in env.txt.
 
 ```
-$ docker run --name db2_ic --privileged --volume db2_ic:/data --publish 50000:50000 --env-file env-ic.txt -d db2/11.1.1/ic
+$ docker run --name db2_ic --privileged --volume db2_ic:/data --publish 50000:50000 --env-file env-db2.txt -d db2/11.1.1/ic
 
-$ cat env.txt
+$ cat env-db2.txt
 # Internal location of Connections database wizard package
 DB_WIZARDS_URL=ftp://FTP_SERVER/FTP_DIRECTORY/Connections_6.0_Wizards_lin_aix.tar
 # Internal location of CR1 update package

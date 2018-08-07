@@ -75,15 +75,13 @@ systemd is not available, the DB2 fault manager component will fail to install, 
     $ docker exec -it db2_install bash
     ```
     
-16. Run the entrypoint.sh script.
+16. Run the entrypoint.sh script and confirm DB2 installs successfully.
 
     ```
     $ ./entrypoint.sh
     ```
-    
-17. Confirm DB2 has installed successfully.
 
-18. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
+17. Delete the /setup directory inside the container. This directory holds installation artifacts that are not needed moving
     forward. Deleting them now reduces the size of the image we are about to create.
     
     ```
@@ -91,43 +89,43 @@ systemd is not available, the DB2 fault manager component will fail to install, 
     $ rm -f -r /setup
     ```
     
-19. Exit the container shell.
+18. Exit the container shell.
 
     ```
     $ exit
     ```
  
-20. Stop the db2_install container.
+19. Stop the db2_install container.
 
     ```
     $ docker stop db2_install
     ```
     
-21. Commit the changes made to the db2_install container to a new image.
+20. Commit the changes made to the db2_install container to a new image.
 
     ```
     $ docker commit db2_install db2/11.1.1/base
     ```
     
-22. Confirm the image was created successfully.
+21. Confirm the image was created successfully.
 
     ```
     $ docker image ls
     ```
     
-23. Remove the db2_install container, as it is no longer needed.
+22. Remove the db2_install container, as it is no longer needed.
 
     ```
     $ docker container rm db2_install
     ```
     
-24. Remove the preinstall image, as it is no longer needed.
+23. Remove the preinstall image, as it is no longer needed.
 
     ```
     $ docker image rm db2/11.1.1/preinstall
     ```
 
-25. Delete env-db2-base.txt, as it is no longer needed.
+24. Delete env-db2-base.txt, as it is no longer needed.
 
     ```
     $ rm ~/env-db2-base.txt
