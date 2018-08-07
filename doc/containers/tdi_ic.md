@@ -86,6 +86,20 @@ An example file can be downloaded from https://raw.githubusercontent.com/chscott
 $ curl -L -O -J -s -S -f https://raw.githubusercontent.com/chscott/ConnectionsDocker/master/tdi/ic/env-tdi.txt
 ```
 
+### Signals
+
+The TDI for Connections container reacts to the following signals, which can be passed via the docker kill command.
+
+```
+$ docker kill --signal SIGNAL_NAME
+```
+
+- **SIGTERM**: Exit the container
+
+- **SIGINT**: Exit the container
+
+- **SIGUSR1**: Synchronize users
+
 ### Example
 
 This example starts a new container named tdi_ic from the [tdi/7.1.1.6/ic image](../images/tdi_ic.md) and mounts the volume 

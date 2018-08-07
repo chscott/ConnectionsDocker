@@ -45,6 +45,20 @@ applied to the databases.
 If the databases have already been created, the DB_WIZARDS_URL variable has no effect. The CR1_UPDATE_URL and CR2_UPDATE_URL
 work as described in the preceding paragraph. If the updates have already been applied, no changes will be made.
 
+### Signals
+
+The DB2 for Connections container reacts to the following signals, which can be passed via the docker kill command.
+
+```
+$ docker kill --signal SIGNAL_NAME
+```
+
+- **SIGTERM**: Stop DB2 and exit the container
+
+- **SIGINT**: Stop DB2 and exit the container
+
+- **SIGHUP**: Restart DB2
+
 ### Example
 
 This example starts a new container named db2_ic from the [db2/11.1.1/ic image](../images/db2_ic.md), exposes port 50000 on
