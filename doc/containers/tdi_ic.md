@@ -94,7 +94,7 @@ will be linked to another container named db2_ic, which is mapped to the alias d
 communicate with the DB2 container for user synchronization.
 
 ```
-$ docker run --name tdi_ic --volume tdi_ic:/data link db2_ic:db2 --env-file env-tdi.txt -d tdi/7.1.1.6/ic
+$ docker run --name tdi_ic --volume tdi_ic:/data --link db2_ic:db2 --env-file env-tdi.txt -d tdi/7.1.1.6/ic
 
 $ cat env-tdi.txt
 # Internal download location for the TDI solution directory for Connections
