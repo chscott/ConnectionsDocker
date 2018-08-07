@@ -15,13 +15,13 @@ $ docker run --name CONTAINER_NAME --volume VOLUME_NAME:/data --link <DB2_CONTAI
 
 ### Options
 
-- --name: A user-friendly name for the container.
+- **--name**: A user-friendly name for the container.
 
-- --volume: Mounts the named volume at /data, which is where the solution directory is installed.
+- **--volume**: Mounts the named volume at /data, which is where the solution directory is installed.
 
-- --link: Links the TDI container to a DB2 container, enabling inter-container communication.
+- **--link**: Links the TDI container to a DB2 container, enabling inter-container communication.
 
-- --env-file: Exports the environment variables from the named file. The supported environment variables are:
+- **--env-file**: Exports the environment variables from the named file. The supported environment variables are:
 
     - **TDISOL_URL**
 

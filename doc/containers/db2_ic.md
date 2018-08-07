@@ -17,15 +17,15 @@ $ docker run --name CONTAINER_NAME --privileged --volume VOLUME_NAME:/data --pub
 
 ### Options
 
-- --name: A user-friendly name for the container.
+- **--name**: A user-friendly name for the container.
 
-- --privileged: DB2 performs certain operations that require elevated privileges.
+- **--privileged**: DB2 performs certain operations that require elevated privileges.
 
-- --volume: Mounts the named volume at /data, which is where the instance is installed.
+- **--volume**: Mounts the named volume at /data, which is where the instance is installed.
 
-- --publish: Exposes the identified port on the host system.
+- **--publish**: Exposes the identified port on the host system.
 
-- --env-file: Exports the environment variables from the named file. The supported environment variables are:
+- **--env-file**: Exports the environment variables from the named file. The supported environment variables are:
                 
     - DB_WIZARDS_URL (internal location of the database wizards package)
     - CR1_UPDATE_URL (internal location of the CR1 database update package)
