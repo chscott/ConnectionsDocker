@@ -7,4 +7,4 @@
 ## Docker containers for IBM Connections
 
 - [DB2](doc/containers/db2_ic.md)
-- [TDI](doc/containers/db2_tdi.md)
+- [TDI](doc/containers/tdi_ic.md)
